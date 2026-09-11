@@ -12,6 +12,7 @@
   margin:0;
   padding:0;
   -webkit-tap-highlight-color:transparent;
+  user-select:none;
 }
 
 html,body{
@@ -25,65 +26,44 @@ html,body{
 button{
   font-family:inherit;
   cursor:pointer;
-  user-select:none;
 }
 
 #startScreen{
   position:fixed;
   inset:0;
-  z-index:10;
+  z-index:20;
   display:flex;
   align-items:flex-end;
   justify-content:center;
   padding:0 5% 7%;
-
   background:
-  linear-gradient(
-    to bottom,
-    rgba(0,0,0,.05),
-    rgba(0,0,0,.2) 50%,
-    rgba(0,0,0,.9)
-  ),
-  url("backrooms-menu.png") center/cover no-repeat;
+    linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.9)),
+    url("backrooms-menu.png") center/cover no-repeat;
 }
 
 .menuContent{
   width:100%;
-  max-width:1400px;
+  max-width:700px;
   display:flex;
   flex-direction:column;
   align-items:center;
 }
 
 .menuButton{
-  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:18px;
-
+  gap:15px;
   border:3px solid #ffd000;
   color:#ffd000;
   background:rgba(0,0,0,.88);
   font-weight:bold;
-  text-align:center;
-
+  box-shadow:0 0 18px rgba(255,208,0,.65);
   clip-path:polygon(
-    15px 0,
-    calc(100% - 15px) 0,
-    100% 15px,
-    100% calc(100% - 15px),
-    calc(100% - 15px) 100%,
-    15px 100%,
-    0 calc(100% - 15px),
-    0 15px
+    15px 0,calc(100% - 15px) 0,100% 15px,
+    100% calc(100% - 15px),calc(100% - 15px) 100%,
+    15px 100%,0 calc(100% - 15px),0 15px
   );
-
-  box-shadow:
-  0 0 14px rgba(255,208,0,.65),
-  inset 0 0 18px rgba(255,208,0,.12);
-
-  transition:.2s;
 }
 
 .menuButton:active{
@@ -93,50 +73,37 @@ button{
 }
 
 #startButton{
-  width:min(510px,90%);
-  min-height:125px;
-  padding:20px;
-  font-size:clamp(30px,4vw,58px);
+  width:90%;
+  min-height:100px;
+  font-size:clamp(28px,6vw,55px);
 }
 
 .smallButtons{
-  width:100%;
+  width:90%;
   display:flex;
-  justify-content:space-between;
-  gap:18px;
-  direction:ltr;
-  margin-top:18px;
+  gap:12px;
+  margin-top:16px;
 }
 
 .smallButton{
-  width:285px;
-  min-height:88px;
-  padding:12px 20px;
-  font-size:clamp(20px,2.2vw,32px);
-  direction:rtl;
-}
-
-.buttonIcon{
-  width:38px;
-  height:38px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:34px;
+  flex:1;
+  min-height:65px;
+  font-size:18px;
 }
 
 #game{
   display:none;
   position:fixed;
   inset:0;
-  background:#81752d;
   overflow:hidden;
+  background:#161405;
 }
 
 #gameCanvas{
-  display:block;
   width:100%;
   height:100%;
+  display:block;
+  touch-action:none;
 }
 
 #hud{
@@ -147,139 +114,109 @@ button{
   z-index:5;
   display:flex;
   justify-content:space-between;
-  gap:10px;
   pointer-events:none;
 }
 
 .hudBox{
   color:#ffd000;
-  background:rgba(0,0,0,.75);
+  background:rgba(0,0,0,.8);
   border:2px solid #ffd000;
   border-radius:8px;
-  padding:8px 14px;
+  padding:8px 13px;
+  font-size:15px;
   font-weight:bold;
-  font-size:16px;
 }
 
 #backButton{
   position:absolute;
   top:62px;
   right:12px;
-  z-index:6;
-  padding:9px 15px;
-  color:#ffd000;
-  background:rgba(0,0,0,.8);
-  border:2px solid #ffd000;
-  border-radius:8px;
-}
-
-#doorHint{
-  position:absolute;
-  bottom:20px;
-  right:20px;
-  z-index:6;
-  display:none;
-  padding:10px 14px;
+  z-index:8;
   color:#ffd000;
   background:rgba(0,0,0,.85);
   border:2px solid #ffd000;
   border-radius:8px;
-  font-size:15px;
+  padding:8px 13px;
 }
 
 #crosshair{
   position:absolute;
-  top:50%;
   left:50%;
+  top:50%;
   width:25px;
   height:25px;
   transform:translate(-50%,-50%);
-  z-index:4;
   pointer-events:none;
+  z-index:4;
 }
 
-#crosshair::before,
-#crosshair::after{
+#crosshair:before,
+#crosshair:after{
   content:"";
   position:absolute;
   background:#ffd000;
-  box-shadow:0 0 6px #000;
+  box-shadow:0 0 7px #000;
 }
 
-#crosshair::before{
+#crosshair:before{
   width:25px;
   height:2px;
   top:12px;
-  left:0;
 }
 
-#crosshair::after{
+#crosshair:after{
   width:2px;
   height:25px;
   left:12px;
-  top:0;
 }
 
-/* عصا التحرك الدائرية */
+#doorHint{
+  display:none;
+  position:absolute;
+  bottom:22px;
+  right:22px;
+  z-index:8;
+  color:#ffd000;
+  background:rgba(0,0,0,.85);
+  border:2px solid #ffd000;
+  border-radius:8px;
+  padding:10px 14px;
+  font-size:14px;
+}
 
 #controls{
   position:absolute;
   left:20px;
-  bottom:22px;
-  z-index:7;
-
+  bottom:20px;
   width:210px;
   height:210px;
-
+  z-index:9;
   border:3px solid #ffd000;
   border-radius:50%;
-
   background:
-    radial-gradient(
-      circle,
-      rgba(255,208,0,.08),
-      rgba(0,0,0,.88) 65%,
-      rgba(0,0,0,.98)
-    );
-
+    radial-gradient(circle,rgba(255,208,0,.12),rgba(0,0,0,.9) 70%);
   box-shadow:
-    0 0 15px rgba(255,208,0,.75),
+    0 0 18px rgba(255,208,0,.8),
     inset 0 0 25px rgba(255,208,0,.2);
-
-  direction:ltr;
+  touch-action:none;
 }
 
-/* الدائرة الداخلية */
-
-#controls::before{
+#controls:before{
   content:"";
   position:absolute;
-  width:112px;
-  height:112px;
+  width:110px;
+  height:110px;
   left:50%;
   top:50%;
   transform:translate(-50%,-50%);
-
   border:2px solid #ffd000;
   border-radius:50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(255,208,0,.65),
-      rgba(105,78,0,.75)
-    );
-
-  box-shadow:
-    0 0 15px rgba(255,208,0,.55),
-    inset 0 0 20px rgba(0,0,0,.55);
-
+  background:radial-gradient(circle,#9a7900,#342800);
+  box-shadow:0 0 15px #ffd000;
   pointer-events:none;
 }
 
-/* النقاط الموجودة داخل العصا */
-
-#controls::after{
+#controls:after{
   content:"•   •   •   •";
   position:absolute;
   width:90px;
@@ -287,209 +224,141 @@ button{
   left:50%;
   top:50%;
   transform:translate(-50%,-50%);
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   color:#ffd000;
-  font-size:28px;
-  letter-spacing:5px;
+  font-size:27px;
   pointer-events:none;
 }
 
-/* أزرار الأسهم */
-
 .control{
   position:absolute;
-  z-index:3;
-
-  width:58px;
-  height:58px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
+  width:60px;
+  height:60px;
   border:0;
   border-radius:50%;
   background:transparent;
   color:#ffd000;
-
-  font-size:35px;
+  font-size:36px;
   font-weight:bold;
-
-  text-shadow:
-    0 0 8px #ffd000,
-    0 0 15px rgba(255,208,0,.8);
-
-  transition:.12s;
-}
-
-.control:active{
-  color:#fff5a0;
-  transform:scale(.8);
+  z-index:3;
+  text-shadow:0 0 12px #ffd000;
 }
 
 .up{
-  top:7px;
+  top:5px;
   left:50%;
   transform:translateX(-50%);
 }
 
-.up:active{
-  transform:translateX(-50%) scale(.8);
+.down{
+  bottom:5px;
+  left:50%;
+  transform:translateX(-50%);
 }
 
 .left{
-  left:7px;
+  left:5px;
   top:50%;
   transform:translateY(-50%);
 }
 
-.left:active{
-  transform:translateY(-50%) scale(.8);
+.right{
+  right:5px;
+  top:50%;
+  transform:translateY(-50%);
 }
 
-.down{
-  bottom:7px;
-  left:50%;
-  transform:translateX(-50%);
+.control:active{
+  color:white;
+  transform:scale(.8);
 }
 
+.up:active,
 .down:active{
   transform:translateX(-50%) scale(.8);
 }
 
-.right{
-  right:7px;
-  top:50%;
-  transform:translateY(-50%);
-}
-
+.left:active,
 .right:active{
   transform:translateY(-50%) scale(.8);
 }
 
-/* أزرار النظر */
-
 #lookControls{
   position:absolute;
-  bottom:30px;
   right:22px;
-  z-index:7;
+  bottom:30px;
+  z-index:9;
   display:flex;
   gap:10px;
 }
 
 .lookButton{
-  width:62px;
-  height:62px;
-
+  width:65px;
+  height:65px;
   border:2px solid #ffd000;
   border-radius:50%;
-
-  background:rgba(0,0,0,.78);
   color:#ffd000;
-
-  font-size:26px;
-
-  box-shadow:
-    0 0 10px rgba(255,208,0,.5),
-    inset 0 0 12px rgba(255,208,0,.12);
+  background:rgba(0,0,0,.8);
+  font-size:28px;
+  box-shadow:0 0 12px rgba(255,208,0,.6);
 }
 
-.lookButton:active{
-  background:#ffd000;
-  color:#000;
-  transform:scale(.9);
+#swipeHint{
+  position:absolute;
+  right:22px;
+  bottom:110px;
+  z-index:8;
+  color:#ffd000;
+  background:rgba(0,0,0,.75);
+  border:1px solid #ffd000;
+  border-radius:8px;
+  padding:8px 12px;
+  font-size:13px;
 }
 
 .modal{
   display:none;
   position:fixed;
   inset:0;
-  z-index:20;
+  z-index:30;
   align-items:center;
   justify-content:center;
   padding:20px;
-  background:rgba(0,0,0,.85);
+  background:rgba(0,0,0,.88);
 }
 
 .modalBox{
   width:min(500px,100%);
-  padding:28px;
+  padding:25px;
   text-align:center;
   color:white;
   background:#111;
   border:2px solid #ffd000;
   border-radius:12px;
-  box-shadow:0 0 25px rgba(255,208,0,.5);
 }
 
 .modalBox h2{
   color:#ffd000;
-  margin-bottom:18px;
+  margin-bottom:15px;
 }
 
 .modalBox p{
   line-height:2;
-  font-size:17px;
 }
 
 .closeButton{
-  margin-top:22px;
+  margin-top:20px;
   padding:12px 30px;
-  border:1px solid #ffd000;
-  border-radius:8px;
   background:#ffd000;
   color:#000;
+  border:0;
+  border-radius:8px;
   font-weight:bold;
 }
 
-/* الهاتف العمودي */
-
 @media(max-width:700px){
-
-  #startScreen{
-    padding:0 12px 22px;
-  }
-
-  #startButton{
-    min-height:78px;
-    font-size:28px;
-  }
-
-  .smallButtons{
-    gap:9px;
-    margin-top:12px;
-  }
-
-  .smallButton{
-    width:50%;
-    min-height:58px;
-    padding:8px 5px;
-    gap:6px;
-    font-size:15px;
-  }
-
-  .buttonIcon{
-    width:27px;
-    height:27px;
-    font-size:25px;
-  }
-
-  .hudBox{
-    padding:7px 10px;
-    font-size:12px;
-  }
-
-  #backButton{
-    top:58px;
-    font-size:12px;
-    padding:7px 10px;
-  }
-
   #controls{
     width:145px;
     height:145px;
@@ -498,109 +367,48 @@ button{
     border-width:2px;
   }
 
-  #controls::before{
+  #controls:before{
     width:76px;
     height:76px;
   }
 
-  #controls::after{
+  #controls:after{
     width:55px;
     height:55px;
-    font-size:19px;
-    letter-spacing:3px;
+    font-size:18px;
   }
 
   .control{
-    width:40px;
-    height:40px;
+    width:42px;
+    height:42px;
     font-size:25px;
-  }
-
-  .up{
-    top:2px;
-  }
-
-  .left{
-    left:2px;
-  }
-
-  .down{
-    bottom:2px;
-  }
-
-  .right{
-    right:2px;
   }
 
   #lookControls{
     right:8px;
     bottom:12px;
-    gap:6px;
   }
 
   .lookButton{
-    width:43px;
-    height:43px;
-    font-size:19px;
+    width:45px;
+    height:45px;
+    font-size:20px;
   }
 
-  #doorHint{
+  #swipeHint{
     right:8px;
-    bottom:10px;
-    max-width:170px;
-    font-size:12px;
-  }
-}
-
-/* الهاتف بالعرض */
-
-@media(orientation:landscape) and (max-height:500px){
-
-  #controls{
-    width:135px;
-    height:135px;
-    left:8px;
-    bottom:7px;
-  }
-
-  #controls::before{
-    width:70px;
-    height:70px;
-  }
-
-  #controls::after{
-    font-size:17px;
-    letter-spacing:2px;
-  }
-
-  .control{
-    width:36px;
-    height:36px;
-    font-size:23px;
-  }
-
-  #lookControls{
-    right:8px;
-    bottom:10px;
-  }
-
-  .lookButton{
-    width:42px;
-    height:42px;
-    font-size:18px;
-  }
-
-  #hud{
-    top:5px;
-  }
-
-  .hudBox{
-    padding:5px 8px;
+    bottom:70px;
     font-size:11px;
   }
 
+  .hudBox{
+    font-size:11px;
+    padding:6px 9px;
+  }
+
   #backButton{
-    top:42px;
+    top:57px;
+    font-size:11px;
   }
 }
 </style>
@@ -610,79 +418,53 @@ button{
 
 <section id="startScreen">
   <div class="menuContent">
-
-    <button id="startButton" class="menuButton">
-      ابدأ اللعبة
-    </button>
+    <button id="startButton" class="menuButton">ابدأ اللعبة</button>
 
     <div class="smallButtons">
-
-      <button id="settingsButton" class="menuButton smallButton">
-        <span class="buttonIcon">⚙</span>
-        <span>الإعدادات</span>
-      </button>
-
-      <button id="howToPlayButton" class="menuButton smallButton">
-        <span class="buttonIcon">▣</span>
-        <span>طريقة اللعب</span>
-      </button>
-
+      <button id="settingsButton" class="menuButton smallButton">⚙ الإعدادات</button>
+      <button id="howToPlayButton" class="menuButton smallButton">▣ طريقة اللعب</button>
     </div>
   </div>
 </section>
 
 <main id="game">
 
-  <canvas id="gameCanvas"></canvas>
+<canvas id="gameCanvas"></canvas>
 
-  <div id="hud">
-    <div class="hudBox">
-      الغرفة: <span id="roomNumber">1</span>/12
-    </div>
+<div id="hud">
+  <div class="hudBox">الغرفة: <span id="roomNumber">1</span>/60</div>
+  <div class="hudBox">الأبواب: <span id="doorsCount">0</span></div>
+</div>
 
-    <div class="hudBox">
-      الأبواب: <span id="doorsCount">0</span>
-    </div>
-  </div>
+<button id="backButton">رجوع للقائمة</button>
 
-  <button id="backButton">رجوع للقائمة</button>
+<div id="crosshair"></div>
 
-  <div id="crosshair"></div>
+<div id="doorHint">اقترب من الباب واضغط على الشاشة للدخول</div>
 
-  <div id="doorHint">
-    اقترب من الباب ثم اضغط على الشاشة للدخول
-  </div>
+<div id="controls">
+  <button class="control up" data-key="forward">▲</button>
+  <button class="control left" data-key="left">◀</button>
+  <button class="control down" data-key="backward">▼</button>
+  <button class="control right" data-key="right">▶</button>
+</div>
 
-  <div id="controls">
+<div id="lookControls">
+  <button class="lookButton" data-look="left">↶</button>
+  <button class="lookButton" data-look="right">↷</button>
+</div>
 
-    <button class="control up" data-key="forward">▲</button>
-
-    <button class="control left" data-key="left">◀</button>
-
-    <button class="control down" data-key="backward">▼</button>
-
-    <button class="control right" data-key="right">▶</button>
-
-  </div>
-
-  <div id="lookControls">
-    <button class="lookButton" data-look="left">↶</button>
-    <button class="lookButton" data-look="right">↷</button>
-  </div>
+<div id="swipeHint">اسحب على الشاشة للنظر والدوران</div>
 
 </main>
 
 <div class="modal" id="settingsModal">
   <div class="modalBox">
     <h2>الإعدادات</h2>
-    <p>
-      تحرك باستعمال العصا الدائرية.<br>
-      استعمل أزرار النظر لتغيير اتجاه الكاميرا.<br>
-      اضغط على الشاشة عند الاقتراب من الباب.
-    </p>
-    <button class="closeButton" data-close="settingsModal">
-      إغلاق
-    </button>
+    <p>تحرك بالعصا الدائرية.</p>
+    <p>اسحب الشاشة للنظر في جميع الاتجاهات.</p>
+    <p>اقترب من الباب واضغط على الشاشة للانتقال.</p>
+    <button class="closeButton" data-close="settingsModal">إغلاق</button>
   </div>
 </div>
 
@@ -690,13 +472,11 @@ button{
   <div class="modalBox">
     <h2>طريقة اللعب</h2>
     <p>
-      استكشف متاهة الـ Backrooms ثلاثية الأبعاد.<br>
-      كل غرفة تحتوي على أبواب.<br>
-      انتقل من غرفة إلى أخرى حتى تصل إلى الباب النهائي.
+      استكشف 60 غرفة مختلفة داخل متاهة الـ Backrooms.<br>
+      ابحث عن الأبواب وانتقل بينها حتى تصل إلى الباب النهائي.<br>
+      انتبه للكتابات المخيفة والإضاءة الغريبة.
     </p>
-    <button class="closeButton" data-close="howToPlayModal">
-      إغلاق
-    </button>
+    <button class="closeButton" data-close="howToPlayModal">إغلاق</button>
   </div>
 </div>
 
@@ -706,29 +486,20 @@ button{
 const startScreen=document.getElementById("startScreen");
 const startButton=document.getElementById("startButton");
 const game=document.getElementById("game");
-const backButton=document.getElementById("backButton");
 const canvas=document.getElementById("gameCanvas");
-
-const settingsButton=document.getElementById("settingsButton");
-const howToPlayButton=document.getElementById("howToPlayButton");
-
-const settingsModal=document.getElementById("settingsModal");
-const howToPlayModal=document.getElementById("howToPlayModal");
+const backButton=document.getElementById("backButton");
 
 const roomNumber=document.getElementById("roomNumber");
 const doorsCount=document.getElementById("doorsCount");
 const doorHint=document.getElementById("doorHint");
 
-let scene;
-let camera;
-let renderer;
-let clock;
+let scene,camera,renderer,clock;
 let player;
-let currentRoom=0;
-let openedDoors=0;
-let currentDoor=null;
-let running=false;
 let rooms=[];
+let currentRoom=0;
+let currentDoor=null;
+let openedDoors=0;
+let running=false;
 
 let keys={
   forward:false,
@@ -740,28 +511,34 @@ let keys={
 let lookLeft=false;
 let lookRight=false;
 
-const ROOM_WIDTH=42;
-const ROOM_DEPTH=32;
-const WALL_HEIGHT=7;
+let dragging=false;
+let lastTouchX=0;
+let lastTouchY=0;
+
+const ROOM_COUNT=60;
+const ROOM_WIDTH=52;
+const ROOM_DEPTH=44;
+const WALL_HEIGHT=8;
 const WALL_THICKNESS=.7;
 
-const yellowWall=0xaaa044;
-const yellowFloor=0x625a25;
-const yellowCeiling=0x77702d;
-const goldenLight=0xffd96a;
+const WALL_COLOR=0xa69a43;
+const FLOOR_COLOR=0xb8b09a;
+const CEILING_COLOR=0x756c32;
+const RED_TILE=0x641b15;
+const LIGHT_COLOR=0xffd56a;
 
-function material(color,roughness=1){
+function mat(color,roughness=1){
   return new THREE.MeshStandardMaterial({
-    color,
-    roughness,
+    color:color,
+    roughness:roughness,
     metalness:0
   });
 }
 
-function createBox(width,height,depth,color,x,y,z,parent=scene){
+function box(w,h,d,color,x,y,z,parent=scene){
   const mesh=new THREE.Mesh(
-    new THREE.BoxGeometry(width,height,depth),
-    material(color)
+    new THREE.BoxGeometry(w,h,d),
+    mat(color)
   );
 
   mesh.position.set(x,y,z);
@@ -772,250 +549,278 @@ function createBox(width,height,depth,color,x,y,z,parent=scene){
   return mesh;
 }
 
-function initThree(){
-
+function init(){
   scene=new THREE.Scene();
   scene.background=new THREE.Color(0x171507);
-  scene.fog=new THREE.Fog(0x171507,10,55);
+  scene.fog=new THREE.Fog(0x171507,8,65);
 
   camera=new THREE.PerspectiveCamera(
-    72,
-    window.innerWidth/window.innerHeight,
+    75,
+    innerWidth/innerHeight,
     .1,
     1000
   );
 
-  camera.position.set(0,2.1,8);
   camera.rotation.order="YXZ";
 
   renderer=new THREE.WebGLRenderer({
-    canvas,
+    canvas:canvas,
     antialias:true,
     powerPreference:"high-performance"
   });
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
-  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  renderer.setSize(innerWidth,innerHeight);
   renderer.shadowMap.enabled=true;
 
   clock=new THREE.Clock();
 
-  scene.add(new THREE.AmbientLight(0x8d7d38,1.3));
+  scene.add(new THREE.AmbientLight(0x74652c,.65));
 
-  const playerLight=new THREE.PointLight(0xffe6a0,1.1,16);
-  playerLight.position.set(0,3,0);
-
-  camera.add(playerLight);
+  const light=new THREE.PointLight(0xffe3a0,1.2,18);
+  light.position.set(0,2.4,0);
+  camera.add(light);
   scene.add(camera);
 
   player=new THREE.Object3D();
-  player.position.set(0,2.1,8);
   scene.add(player);
 
   createMaze();
 
-  window.addEventListener("resize",resizeThree);
+  addEventListener("resize",resize);
 }
 
-function createRoom(roomIndex){
+function createTileFloor(parent){
+  const floor=box(
+    ROOM_WIDTH,
+    .2,
+    ROOM_DEPTH,
+    FLOOR_COLOR,
+    0,
+    -.1,
+    0,
+    parent
+  );
 
+  for(let x=-ROOM_WIDTH/2+3;x<ROOM_WIDTH/2;x+=6){
+    for(let z=-ROOM_DEPTH/2+3;z<ROOM_DEPTH/2;z+=6){
+
+      if(Math.random()<.35){
+        box(5.8,.04,5.8,RED_TILE,x,.03,z,parent);
+      }
+
+      const line=box(5.85,.015,.05,0x514b3d,x,.055,z-2.95,parent);
+      line.material=mat(0x514b3d);
+    }
+  }
+}
+
+function graffiti(parent,text,x,z,rotation=0){
+  const canvas=document.createElement("canvas");
+  canvas.width=1024;
+  canvas.height=256;
+
+  const ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,1024,256);
+  ctx.font="bold 100px Impact, Arial";
+  ctx.fillStyle="#24120b";
+  ctx.strokeStyle="#120805";
+  ctx.lineWidth=5;
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.strokeText(text,512,128);
+  ctx.fillText(text,512,128);
+
+  const texture=new THREE.CanvasTexture(canvas);
+  const material=new THREE.MeshBasicMaterial({
+    map:texture,
+    transparent:true
+  });
+
+  const sign=new THREE.Mesh(
+    new THREE.PlaneGeometry(7,1.8),
+    material
+  );
+
+  sign.position.set(x,3.1,z);
+  sign.rotation.y=rotation;
+  parent.add(sign);
+}
+
+function createRoom(index){
   const group=new THREE.Group();
-  group.name="room_"+roomIndex;
 
-  const floor=new THREE.Mesh(
-    new THREE.PlaneGeometry(ROOM_WIDTH,ROOM_DEPTH),
-    material(yellowFloor)
+  createTileFloor(group);
+
+  box(
+    ROOM_WIDTH,
+    .3,
+    ROOM_DEPTH,
+    CEILING_COLOR,
+    0,
+    WALL_HEIGHT,
+    0,
+    group
   );
 
-  floor.rotation.x=-Math.PI/2;
-  floor.receiveShadow=true;
-  group.add(floor);
-
-  const ceiling=new THREE.Mesh(
-    new THREE.PlaneGeometry(ROOM_WIDTH,ROOM_DEPTH),
-    material(yellowCeiling)
+  box(
+    ROOM_WIDTH,
+    WALL_HEIGHT,
+    WALL_THICKNESS,
+    WALL_COLOR,
+    0,
+    WALL_HEIGHT/2,
+    -ROOM_DEPTH/2,
+    group
   );
 
-  ceiling.rotation.x=Math.PI/2;
-  ceiling.position.y=WALL_HEIGHT;
-  group.add(ceiling);
-
-  const wallMaterial=material(yellowWall);
-
-  const north=new THREE.Mesh(
-    new THREE.BoxGeometry(
-      ROOM_WIDTH,
-      WALL_HEIGHT,
-      WALL_THICKNESS
-    ),
-    wallMaterial
+  box(
+    ROOM_WIDTH,
+    WALL_HEIGHT,
+    WALL_THICKNESS,
+    WALL_COLOR,
+    0,
+    WALL_HEIGHT/2,
+    ROOM_DEPTH/2,
+    group
   );
 
-  north.position.set(0,WALL_HEIGHT/2,-ROOM_DEPTH/2);
-  group.add(north);
-
-  const south=new THREE.Mesh(
-    new THREE.BoxGeometry(
-      ROOM_WIDTH,
-      WALL_HEIGHT,
-      WALL_THICKNESS
-    ),
-    wallMaterial
+  box(
+    WALL_THICKNESS,
+    WALL_HEIGHT,
+    ROOM_DEPTH,
+    WALL_COLOR,
+    -ROOM_WIDTH/2,
+    WALL_HEIGHT/2,
+    0,
+    group
   );
 
-  south.position.set(0,WALL_HEIGHT/2,ROOM_DEPTH/2);
-  group.add(south);
-
-  const west=new THREE.Mesh(
-    new THREE.BoxGeometry(
-      WALL_THICKNESS,
-      WALL_HEIGHT,
-      ROOM_DEPTH
-    ),
-    wallMaterial
+  box(
+    WALL_THICKNESS,
+    WALL_HEIGHT,
+    ROOM_DEPTH,
+    WALL_COLOR,
+    ROOM_WIDTH/2,
+    WALL_HEIGHT/2,
+    0,
+    group
   );
 
-  west.position.set(-ROOM_WIDTH/2,WALL_HEIGHT/2,0);
-  group.add(west);
-
-  const east=new THREE.Mesh(
-    new THREE.BoxGeometry(
-      WALL_THICKNESS,
-      WALL_HEIGHT,
-      ROOM_DEPTH
-    ),
-    wallMaterial
-  );
-
-  east.position.set(ROOM_WIDTH/2,WALL_HEIGHT/2,0);
-  group.add(east);
-
-  for(let x=-14;x<=14;x+=14){
-    for(let z=-9;z<=9;z+=18){
-
-      const pillar=new THREE.Mesh(
-        new THREE.BoxGeometry(1.2,WALL_HEIGHT,.9),
-        wallMaterial
-      );
-
-      pillar.position.set(x,WALL_HEIGHT/2,z);
-      group.add(pillar);
+  for(let x=-18;x<=18;x+=12){
+    for(let z=-14;z<=14;z+=14){
+      box(1.1,WALL_HEIGHT,.9,WALL_COLOR,x,WALL_HEIGHT/2,z,group);
     }
   }
 
-  for(let x=-15;x<=15;x+=10){
-
+  for(let x=-18;x<=18;x+=12){
     const light=new THREE.PointLight(
-      goldenLight,
-      1.5,
-      14
+      LIGHT_COLOR,
+      Math.random()>.2?1.4:.25,
+      16
     );
 
-    light.position.set(x,6.4,0);
+    light.position.set(x,7,0);
     group.add(light);
 
-    createBox(
-      3,
-      .12,
-      .8,
-      0xffef9b,
-      x,
-      6.85,
-      0,
-      group
-    );
+    box(3,.12,1,0xffef9a,x,7.75,0,group);
   }
+
+  const texts=[
+    "NO ESCAPE",
+    "TURN AROUND",
+    "YOU ARE NOT ALONE",
+    "HELP ME",
+    "RUN",
+    "THE BACKROOMS IS REAL",
+    "DO NOT TRUST THE DOOR",
+    "IT IS BEHIND YOU"
+  ];
+
+  graffiti(group,texts[index%texts.length],-ROOM_WIDTH/2+.42,-7,Math.PI/2);
+  graffiti(group,texts[(index+2)%texts.length],ROOM_WIDTH/2-.42,8,-Math.PI/2);
+  graffiti(group,texts[(index+4)%texts.length],-5,-ROOM_DEPTH/2+.42,0);
 
   scene.add(group);
   return group;
 }
 
 function createDoor(x,y,z,rotation,target){
+  const group=new THREE.Group();
 
-  const frame=new THREE.Group();
+  box(.35,4.8,.35,0xffd000,-1.65,2.4,0,group);
+  box(.35,4.8,.35,0xffd000,1.65,2.4,0,group);
+  box(3.65,.35,.35,0xffd000,0,4.65,0,group);
 
-  const glowMaterial=new THREE.MeshBasicMaterial({
-    color:0x8c2cff,
-    transparent:true,
-    opacity:.85
+  const doorMaterial=new THREE.MeshBasicMaterial({
+    color:0x140c04
   });
 
-  createBox(.35,4.5,.35,0xffd000,-1.6,2.25,0,frame);
-  createBox(.35,4.5,.35,0xffd000,1.6,2.25,0,frame);
-  createBox(3.55,.35,.35,0xffd000,0,4.35,0,frame);
-
   const door=new THREE.Mesh(
-    new THREE.BoxGeometry(3.1,4.1,.15),
-    glowMaterial
+    new THREE.BoxGeometry(3.2,4.3,.16),
+    doorMaterial
   );
 
-  door.position.set(0,2.1,0);
-  frame.add(door);
+  door.position.set(0,2.15,0);
+  group.add(door);
 
-  frame.position.set(x,y,z);
-  frame.rotation.y=rotation;
+  group.position.set(x,y,z);
+  group.rotation.y=rotation;
 
-  frame.userData={
-    target,
+  group.userData={
+    target:target,
     opened:false
   };
 
-  scene.add(frame);
-
-  return frame;
+  scene.add(group);
+  return group;
 }
 
 function createMaze(){
-
   rooms=[];
 
-  for(let i=0;i<12;i++){
-
-    const room=createRoom(i);
+  for(let i=0;i<ROOM_COUNT;i++){
+    const group=createRoom(i);
 
     const data={
-      index:i,
-      group:room,
+      group:group,
       doors:[]
     };
 
-    if(i<11){
-
-      const door=createDoor(
-        0,
-        0,
-        -ROOM_DEPTH/2+.5,
-        0,
-        i+1
+    if(i<ROOM_COUNT-1){
+      data.doors.push(
+        createDoor(
+          0,
+          0,
+          -ROOM_DEPTH/2+.6,
+          0,
+          i+1
+        )
       );
-
-      data.doors.push(door);
     }
 
     if(i>0){
-
-      const door=createDoor(
-        ROOM_WIDTH/2-.5,
-        0,
-        0,
-        Math.PI/2,
-        i-1
+      data.doors.push(
+        createDoor(
+          ROOM_WIDTH/2-.6,
+          0,
+          0,
+          Math.PI/2,
+          i-1
+        )
       );
-
-      data.doors.push(door);
     }
 
-    if(i===11){
-
-      const finalDoor=createDoor(
-        0,
-        0,
-        ROOM_DEPTH/2-.5,
-        Math.PI,
-        null
+    if(i===ROOM_COUNT-1){
+      data.doors.push(
+        createDoor(
+          0,
+          0,
+          ROOM_DEPTH/2-.6,
+          Math.PI,
+          null
+        )
       );
-
-      data.doors.push(finalDoor);
     }
 
     rooms.push(data);
@@ -1025,9 +830,7 @@ function createMaze(){
 }
 
 function showRoom(index){
-
   rooms.forEach((room,i)=>{
-
     room.group.visible=i===index;
 
     room.doors.forEach(door=>{
@@ -1038,318 +841,225 @@ function showRoom(index){
   currentRoom=index;
   roomNumber.textContent=index+1;
 
-  player.position.set(0,2.1,8);
+  player.position.set(0,2.1,15);
   camera.position.copy(player.position);
+  camera.rotation.set(0,Math.PI,0);
 }
 
 function enterDoor(){
-
   if(!currentDoor)return;
 
   const target=currentDoor.userData.target;
 
   if(target===null){
-
-    doorHint.style.display="none";
-
-    alert(
-      "أحسنت! وصلت إلى الباب النهائي ونجوت من الـ Backrooms."
-    );
-
+    alert("أحسنت! وصلت إلى الباب النهائي ونجوت من الـ Backrooms.");
     return;
   }
 
   if(!currentDoor.userData.opened){
-
     currentDoor.userData.opened=true;
     openedDoors++;
     doorsCount.textContent=openedDoors;
   }
 
   showRoom(target);
-
   currentDoor=null;
   doorHint.style.display="none";
 }
 
-function updateMovement(delta){
-
-  if(!player)return;
-
-  const speed=5*delta;
+function update(delta){
+  const speed=6*delta;
 
   let forward=0;
   let side=0;
 
-  if(keys.forward)forward+=1;
-  if(keys.backward)forward-=1;
-  if(keys.left)side-=1;
-  if(keys.right)side+=1;
+  if(keys.forward)forward++;
+  if(keys.backward)forward--;
+  if(keys.left)side--;
+  if(keys.right)side++;
 
-  if(forward!==0||side!==0){
+  const direction=new THREE.Vector3();
 
-    const direction=new THREE.Vector3();
+  camera.getWorldDirection(direction);
+  direction.y=0;
+  direction.normalize();
 
-    camera.getWorldDirection(direction);
-    direction.y=0;
-    direction.normalize();
+  const rightVector=new THREE.Vector3()
+    .crossVectors(direction,new THREE.Vector3(0,1,0))
+    .normalize();
 
-    const rightVector=new THREE.Vector3()
-      .crossVectors(
-        direction,
-        new THREE.Vector3(0,1,0)
-      )
-      .normalize();
-
-    player.position.addScaledVector(
-      direction,
-      forward*speed
-    );
-
-    player.position.addScaledVector(
-      rightVector,
-      side*speed
-    );
-  }
+  player.position.addScaledVector(direction,forward*speed);
+  player.position.addScaledVector(rightVector,side*speed);
 
   if(lookLeft)camera.rotation.y+=delta*1.8;
   if(lookRight)camera.rotation.y-=delta*1.8;
 
-  player.position.x=Math.max(
-    -19,
-    Math.min(19,player.position.x)
-  );
-
-  player.position.z=Math.max(
-    -13,
-    Math.min(13,player.position.z)
-  );
+  player.position.x=Math.max(-23,Math.min(23,player.position.x));
+  player.position.z=Math.max(-19,Math.min(19,player.position.z));
 
   camera.position.copy(player.position);
 
-  checkNearbyDoor();
+  checkDoor();
 }
 
-function checkNearbyDoor(){
-
+function checkDoor(){
   currentDoor=null;
 
-  const room=rooms[currentRoom];
-
-  room.doors.forEach(door=>{
-
-    const distance=player.position.distanceTo(
-      door.position
-    );
-
-    if(distance<5){
+  rooms[currentRoom].doors.forEach(door=>{
+    if(player.position.distanceTo(door.position)<5){
       currentDoor=door;
     }
   });
 
-  doorHint.style.display=
-    currentDoor?"block":"none";
+  doorHint.style.display=currentDoor?"block":"none";
 }
 
 function animate(){
-
   if(!running)return;
 
   requestAnimationFrame(animate);
 
-  const delta=Math.min(
-    clock.getDelta(),
-    .05
-  );
-
-  updateMovement(delta);
+  const delta=Math.min(clock.getDelta(),.05);
+  update(delta);
   renderer.render(scene,camera);
 }
 
 function startGame(){
-
   startScreen.style.display="none";
   game.style.display="block";
 
-  if(!scene)initThree();
+  if(!scene)init();
 
   running=true;
   openedDoors=0;
   doorsCount.textContent="0";
-
   showRoom(0);
   animate();
 }
 
 function backToMenu(){
-
   running=false;
   game.style.display="none";
   startScreen.style.display="flex";
 }
 
-function resizeThree(){
-
+function resize(){
   if(!camera||!renderer)return;
 
-  camera.aspect=
-    window.innerWidth/window.innerHeight;
-
+  camera.aspect=innerWidth/innerHeight;
   camera.updateProjectionMatrix();
-
-  renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-  );
+  renderer.setSize(innerWidth,innerHeight);
 }
 
 startButton.addEventListener("click",startGame);
 backButton.addEventListener("click",backToMenu);
 
 canvas.addEventListener("click",enterDoor);
-canvas.addEventListener("touchstart",enterDoor);
 
-window.addEventListener("keydown",event=>{
-
-  if(event.key==="ArrowUp"||event.key.toLowerCase()==="w"){
-    keys.forward=true;
-  }
-
-  if(event.key==="ArrowDown"||event.key.toLowerCase()==="s"){
-    keys.backward=true;
-  }
-
-  if(event.key==="ArrowLeft"||event.key.toLowerCase()==="a"){
-    keys.left=true;
-  }
-
-  if(event.key==="ArrowRight"||event.key.toLowerCase()==="d"){
-    keys.right=true;
-  }
-
-  if(event.key==="Enter"||event.key===" "){
-    enterDoor();
-  }
+addEventListener("keydown",e=>{
+  if(e.key==="ArrowUp"||e.key.toLowerCase()==="w")keys.forward=true;
+  if(e.key==="ArrowDown"||e.key.toLowerCase()==="s")keys.backward=true;
+  if(e.key==="ArrowLeft"||e.key.toLowerCase()==="a")keys.left=true;
+  if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")keys.right=true;
+  if(e.key==="Enter"||e.key===" ")enterDoor();
 });
 
-window.addEventListener("keyup",event=>{
-
-  if(event.key==="ArrowUp"||event.key.toLowerCase()==="w"){
-    keys.forward=false;
-  }
-
-  if(event.key==="ArrowDown"||event.key.toLowerCase()==="s"){
-    keys.backward=false;
-  }
-
-  if(event.key==="ArrowLeft"||event.key.toLowerCase()==="a"){
-    keys.left=false;
-  }
-
-  if(event.key==="ArrowRight"||event.key.toLowerCase()==="d"){
-    keys.right=false;
-  }
+addEventListener("keyup",e=>{
+  if(e.key==="ArrowUp"||e.key.toLowerCase()==="w")keys.forward=false;
+  if(e.key==="ArrowDown"||e.key.toLowerCase()==="s")keys.backward=false;
+  if(e.key==="ArrowLeft"||e.key.toLowerCase()==="a")keys.left=false;
+  if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")keys.right=false;
 });
-
-/* التحكم باللمس */
 
 document.querySelectorAll(".control").forEach(button=>{
-
   const key=button.dataset.key;
 
-  const press=event=>{
-    event.preventDefault();
+  const down=e=>{
+    e.preventDefault();
     keys[key]=true;
   };
 
-  const release=event=>{
-    event.preventDefault();
+  const up=e=>{
+    e.preventDefault();
     keys[key]=false;
   };
 
-  button.addEventListener(
-    "touchstart",
-    press,
-    {passive:false}
-  );
-
-  button.addEventListener(
-    "touchend",
-    release,
-    {passive:false}
-  );
-
-  button.addEventListener(
-    "touchcancel",
-    release,
-    {passive:false}
-  );
-
-  button.addEventListener("mousedown",press);
-  button.addEventListener("mouseup",release);
-  button.addEventListener("mouseleave",release);
+  button.addEventListener("touchstart",down,{passive:false});
+  button.addEventListener("touchend",up,{passive:false});
+  button.addEventListener("touchcancel",up,{passive:false});
+  button.addEventListener("mousedown",down);
+  button.addEventListener("mouseup",up);
+  button.addEventListener("mouseleave",up);
 });
 
-/* التحكم بالنظر */
-
 document.querySelectorAll(".lookButton").forEach(button=>{
-
   const type=button.dataset.look;
 
-  const startLook=event=>{
-
-    event.preventDefault();
+  const down=e=>{
+    e.preventDefault();
 
     if(type==="left")lookLeft=true;
     if(type==="right")lookRight=true;
   };
 
-  const stopLook=event=>{
-
-    event.preventDefault();
-
+  const up=e=>{
+    e.preventDefault();
     lookLeft=false;
     lookRight=false;
   };
 
-  button.addEventListener(
-    "touchstart",
-    startLook,
-    {passive:false}
-  );
-
-  button.addEventListener(
-    "touchend",
-    stopLook,
-    {passive:false}
-  );
-
-  button.addEventListener(
-    "touchcancel",
-    stopLook,
-    {passive:false}
-  );
-
-  button.addEventListener("mousedown",startLook);
-  button.addEventListener("mouseup",stopLook);
-  button.addEventListener("mouseleave",stopLook);
+  button.addEventListener("touchstart",down,{passive:false});
+  button.addEventListener("touchend",up,{passive:false});
+  button.addEventListener("mousedown",down);
+  button.addEventListener("mouseup",up);
 });
 
-settingsButton.addEventListener("click",()=>{
-  settingsModal.style.display="flex";
+canvas.addEventListener("touchstart",e=>{
+  if(e.touches.length!==1)return;
+
+  dragging=true;
+  lastTouchX=e.touches[0].clientX;
+  lastTouchY=e.touches[0].clientY;
+},{passive:true});
+
+canvas.addEventListener("touchmove",e=>{
+  if(!dragging||e.touches.length!==1)return;
+
+  const touch=e.touches[0];
+  const dx=touch.clientX-lastTouchX;
+  const dy=touch.clientY-lastTouchY;
+
+  camera.rotation.y-=dx*.006;
+  camera.rotation.x-=dy*.004;
+
+  camera.rotation.x=Math.max(
+    -Math.PI/2.2,
+    Math.min(Math.PI/2.2,camera.rotation.x)
+  );
+
+  lastTouchX=touch.clientX;
+  lastTouchY=touch.clientY;
+},{passive:true});
+
+canvas.addEventListener("touchend",()=>{
+  dragging=false;
+},{passive:true});
+
+canvas.addEventListener("touchcancel",()=>{
+  dragging=false;
+},{passive:true});
+
+document.getElementById("settingsButton").addEventListener("click",()=>{
+  document.getElementById("settingsModal").style.display="flex";
 });
 
-howToPlayButton.addEventListener("click",()=>{
-  howToPlayModal.style.display="flex";
+document.getElementById("howToPlayButton").addEventListener("click",()=>{
+  document.getElementById("howToPlayModal").style.display="flex";
 });
 
 document.querySelectorAll("[data-close]").forEach(button=>{
-
   button.addEventListener("click",()=>{
-
-    document.getElementById(
-      button.dataset.close
-    ).style.display="none";
+    document.getElementById(button.dataset.close).style.display="none";
   });
 });
 </script>
