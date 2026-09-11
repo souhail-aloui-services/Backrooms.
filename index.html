@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-<title>BACKROOMS — SOUHAIL ALAOUI</title>
-
+<title>BACKROOMS — SOUHAIL ALAOUI v2</title>
 <style>
+/* نفس الستايل ديالك + زدت عليه */
 *{
   box-sizing:border-box;
   margin:0;
@@ -14,7 +13,6 @@
   -webkit-tap-highlight-color:transparent;
   user-select:none;
 }
-
 html,body{
   width:100%;
   height:100%;
@@ -22,11 +20,7 @@ html,body{
   background:#000;
   font-family:Arial,Tahoma,sans-serif;
 }
-
-button{
-  font-family:inherit;
-  cursor:pointer;
-}
+button{ font-family:inherit; cursor:pointer; }
 
 #startScreen{
   position:fixed;
@@ -40,386 +34,56 @@ button{
     linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.9)),
     url("backrooms-menu.png") center/cover no-repeat;
 }
-
-.menuContent{
-  width:100%;
-  max-width:700px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
+.menuContent{ width:100%; max-width:700px; display:flex; flex-direction:column; align-items:center; }
 .menuButton{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:15px;
-  border:3px solid #ffd000;
-  color:#ffd000;
-  background:rgba(0,0,0,.88);
-  font-weight:bold;
-  box-shadow:0 0 18px rgba(255,208,0,.65);
-  clip-path:polygon(
-    15px 0,calc(100% - 15px) 0,100% 15px,
-    100% calc(100% - 15px),calc(100% - 15px) 100%,
-    15px 100%,0 calc(100% - 15px),0 15px
-  );
+  display:flex; align-items:center; justify-content:center; gap:15px;
+  border:3px solid #ffd000; color:#ffd000; background:rgba(0,0,0,.88);
+  font-weight:bold; box-shadow:0 0 18px rgba(255,208,0,.65);
+  clip-path:polygon(15px 0,calc(100% - 15px) 0,100% 15px,100% calc(100% - 15px),calc(100% - 15px) 100%,15px 100%,0 calc(100% - 15px),0 15px);
 }
+.menuButton:active{ transform:scale(.96); background:#ffd000; color:#000; }
+#startButton{ width:90%; min-height:100px; font-size:clamp(28px,6vw,55px); }
+.smallButtons{ width:90%; display:flex; gap:12px; margin-top:16px; }
+.smallButton{ flex:1; min-height:65px; font-size:18px; }
 
-.menuButton:active{
-  transform:scale(.96);
-  background:#ffd000;
-  color:#000;
-}
+#game{ display:none; position:fixed; inset:0; overflow:hidden; background:#161405; }
+#gameCanvas{ width:100%; height:100%; display:block; touch-action:none; }
 
-#startButton{
-  width:90%;
-  min-height:100px;
-  font-size:clamp(28px,6vw,55px);
-}
+#hud{ position:absolute; top:12px; left:12px; right:12px; z-index:5; display:flex; justify-content:space-between; pointer-events:none; }
+.hudBox{ color:#ffd000; background:rgba(0,0,0,.8); border:2px solid #ffd000; border-radius:8px; padding:8px 13px; font-size:15px; font-weight:bold; }
+#backButton{ position:absolute; top:62px; right:12px; z-index:8; color:#ffd000; background:rgba(0,0,0,.85); border:2px solid #ffd000; border-radius:8px; padding:8px 13px; }
 
-.smallButtons{
-  width:90%;
-  display:flex;
-  gap:12px;
-  margin-top:16px;
-}
+#crosshair{ position:absolute; left:50%; top:50%; width:25px; height:25px; transform:translate(-50%,-50%); pointer-events:none; z-index:4; }
+#crosshair:before,#crosshair:after{ content:""; position:absolute; background:#ffd000; box-shadow:0 0 7px #000; }
+#crosshair:before{ width:25px; height:2px; top:12px; }
+#crosshair:after{ width:2px; height:25px; left:12px; }
 
-.smallButton{
-  flex:1;
-  min-height:65px;
-  font-size:18px;
-}
+#doorHint{ display:none; position:absolute; bottom:22px; right:22px; z-index:8; color:#ffd000; background:rgba(0,0,0,.85); border:2px solid #ffd000; border-radius:8px; padding:10px 14px; font-size:14px; }
 
-#game{
-  display:none;
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  background:#161405;
-}
+#entityWarning{ display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10; color:#ff0000; font-size:32px; font-weight:bold; text-shadow:0 0 20px #ff0000; animation:blink 0.5s infinite; }
+@keyframes blink{ 0%,50%,100%{opacity:1} 25%,75%{opacity:0} }
 
-#gameCanvas{
-  width:100%;
-  height:100%;
-  display:block;
-  touch-action:none;
-}
+#controls{ position:absolute; left:20px; bottom:20px; width:210px; height:210px; z-index:9; border:3px solid #ffd000; border-radius:50%; background: radial-gradient(circle,rgba(255,208,0,.12),rgba(0,0,0,.9) 70%); box-shadow: 0 0 18px rgba(255,208,0,.8), inset 0 0 25px rgba(255,208,0,.2); touch-action:none; }
+#controls:before{ content:""; position:absolute; width:110px; height:110px; left:50%; top:50%; transform:translate(-50%,-50%); border:2px solid #ffd000; border-radius:50%; background:radial-gradient(circle,#9a7900,#342800); box-shadow:0 0 15px #ffd000; pointer-events:none; }
+.control{ position:absolute; width:60px; height:60px; border:0; border-radius:50%; background:transparent; color:#ffd000; font-size:36px; font-weight:bold; z-index:3; text-shadow:0 0 12px #ffd000; }
+.up{ top:5px; left:50%; transform:translateX(-50%); }.down{ bottom:5px; left:50%; transform:translateX(-50%); }.left{ left:5px; top:50%; transform:translateY(-50%); }.right{ right:5px; top:50%; transform:translateY(-50%); }
+.control:active{ color:white; transform:scale(.8); }
 
-#hud{
-  position:absolute;
-  top:12px;
-  left:12px;
-  right:12px;
-  z-index:5;
-  display:flex;
-  justify-content:space-between;
-  pointer-events:none;
-}
+#lookControls{ position:absolute; right:22px; bottom:30px; z-index:9; display:flex; gap:10px; }
+.lookButton{ width:65px; height:65px; border:2px solid #ffd000; border-radius:50%; color:#ffd000; background:rgba(0,0,0,.8); font-size:28px; box-shadow:0 0 12px rgba(255,208,0,.6); }
+#swipeHint{ position:absolute; right:22px; bottom:110px; z-index:8; color:#ffd000; background:rgba(0,0,0,.75); border:1px solid #ffd000; border-radius:8px; padding:8px 12px; font-size:13px; }
 
-.hudBox{
-  color:#ffd000;
-  background:rgba(0,0,0,.8);
-  border:2px solid #ffd000;
-  border-radius:8px;
-  padding:8px 13px;
-  font-size:15px;
-  font-weight:bold;
-}
-
-#backButton{
-  position:absolute;
-  top:62px;
-  right:12px;
-  z-index:8;
-  color:#ffd000;
-  background:rgba(0,0,0,.85);
-  border:2px solid #ffd000;
-  border-radius:8px;
-  padding:8px 13px;
-}
-
-#crosshair{
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:25px;
-  height:25px;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-  z-index:4;
-}
-
-#crosshair:before,
-#crosshair:after{
-  content:"";
-  position:absolute;
-  background:#ffd000;
-  box-shadow:0 0 7px #000;
-}
-
-#crosshair:before{
-  width:25px;
-  height:2px;
-  top:12px;
-}
-
-#crosshair:after{
-  width:2px;
-  height:25px;
-  left:12px;
-}
-
-#doorHint{
-  display:none;
-  position:absolute;
-  bottom:22px;
-  right:22px;
-  z-index:8;
-  color:#ffd000;
-  background:rgba(0,0,0,.85);
-  border:2px solid #ffd000;
-  border-radius:8px;
-  padding:10px 14px;
-  font-size:14px;
-}
-
-#controls{
-  position:absolute;
-  left:20px;
-  bottom:20px;
-  width:210px;
-  height:210px;
-  z-index:9;
-  border:3px solid #ffd000;
-  border-radius:50%;
-  background:
-    radial-gradient(circle,rgba(255,208,0,.12),rgba(0,0,0,.9) 70%);
-  box-shadow:
-    0 0 18px rgba(255,208,0,.8),
-    inset 0 0 25px rgba(255,208,0,.2);
-  touch-action:none;
-}
-
-#controls:before{
-  content:"";
-  position:absolute;
-  width:110px;
-  height:110px;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  border:2px solid #ffd000;
-  border-radius:50%;
-  background:radial-gradient(circle,#9a7900,#342800);
-  box-shadow:0 0 15px #ffd000;
-  pointer-events:none;
-}
-
-#controls:after{
-  content:"•   •   •   •";
-  position:absolute;
-  width:90px;
-  height:90px;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#ffd000;
-  font-size:27px;
-  pointer-events:none;
-}
-
-.control{
-  position:absolute;
-  width:60px;
-  height:60px;
-  border:0;
-  border-radius:50%;
-  background:transparent;
-  color:#ffd000;
-  font-size:36px;
-  font-weight:bold;
-  z-index:3;
-  text-shadow:0 0 12px #ffd000;
-}
-
-.up{
-  top:5px;
-  left:50%;
-  transform:translateX(-50%);
-}
-
-.down{
-  bottom:5px;
-  left:50%;
-  transform:translateX(-50%);
-}
-
-.left{
-  left:5px;
-  top:50%;
-  transform:translateY(-50%);
-}
-
-.right{
-  right:5px;
-  top:50%;
-  transform:translateY(-50%);
-}
-
-.control:active{
-  color:white;
-  transform:scale(.8);
-}
-
-.up:active,
-.down:active{
-  transform:translateX(-50%) scale(.8);
-}
-
-.left:active,
-.right:active{
-  transform:translateY(-50%) scale(.8);
-}
-
-#lookControls{
-  position:absolute;
-  right:22px;
-  bottom:30px;
-  z-index:9;
-  display:flex;
-  gap:10px;
-}
-
-.lookButton{
-  width:65px;
-  height:65px;
-  border:2px solid #ffd000;
-  border-radius:50%;
-  color:#ffd000;
-  background:rgba(0,0,0,.8);
-  font-size:28px;
-  box-shadow:0 0 12px rgba(255,208,0,.6);
-}
-
-#swipeHint{
-  position:absolute;
-  right:22px;
-  bottom:110px;
-  z-index:8;
-  color:#ffd000;
-  background:rgba(0,0,0,.75);
-  border:1px solid #ffd000;
-  border-radius:8px;
-  padding:8px 12px;
-  font-size:13px;
-}
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:30;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:rgba(0,0,0,.88);
-}
-
-.modalBox{
-  width:min(500px,100%);
-  padding:25px;
-  text-align:center;
-  color:white;
-  background:#111;
-  border:2px solid #ffd000;
-  border-radius:12px;
-}
-
-.modalBox h2{
-  color:#ffd000;
-  margin-bottom:15px;
-}
-
-.modalBox p{
-  line-height:2;
-}
-
-.closeButton{
-  margin-top:20px;
-  padding:12px 30px;
-  background:#ffd000;
-  color:#000;
-  border:0;
-  border-radius:8px;
-  font-weight:bold;
-}
-
-@media(max-width:700px){
-  #controls{
-    width:145px;
-    height:145px;
-    left:8px;
-    bottom:10px;
-    border-width:2px;
-  }
-
-  #controls:before{
-    width:76px;
-    height:76px;
-  }
-
-  #controls:after{
-    width:55px;
-    height:55px;
-    font-size:18px;
-  }
-
-  .control{
-    width:42px;
-    height:42px;
-    font-size:25px;
-  }
-
-  #lookControls{
-    right:8px;
-    bottom:12px;
-  }
-
-  .lookButton{
-    width:45px;
-    height:45px;
-    font-size:20px;
-  }
-
-  #swipeHint{
-    right:8px;
-    bottom:70px;
-    font-size:11px;
-  }
-
-  .hudBox{
-    font-size:11px;
-    padding:6px 9px;
-  }
-
-  #backButton{
-    top:57px;
-    font-size:11px;
-  }
-}
+.modal{ display:none; position:fixed; inset:0; z-index:30; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.88); }
+.modalBox{ width:min(500px,100%); padding:25px; text-align:center; color:white; background:#111; border:2px solid #ffd000; border-radius:12px; }
+.modalBox h2{ color:#ffd000; margin-bottom:15px; }
+.closeButton{ margin-top:20px; padding:12px 30px; background:#ffd000; color:#000; border:0; border-radius:8px; font-weight:bold; }
 </style>
 </head>
-
 <body>
 
 <section id="startScreen">
   <div class="menuContent">
     <button id="startButton" class="menuButton">ابدأ اللعبة</button>
-
     <div class="smallButtons">
       <button id="settingsButton" class="menuButton smallButton">⚙ الإعدادات</button>
       <button id="howToPlayButton" class="menuButton smallButton">▣ طريقة اللعب</button>
@@ -428,19 +92,16 @@ button{
 </section>
 
 <main id="game">
-
 <canvas id="gameCanvas"></canvas>
-
 <div id="hud">
-  <div class="hudBox">الغرفة: <span id="roomNumber">1</span>/60</div>
+  <div class="hudBox">الغرفة: <span id="roomNumber">1</span>/<span id="roomTotal">100</span></div>
   <div class="hudBox">الأبواب: <span id="doorsCount">0</span></div>
+  <div class="hudBox">الوقت: <span id="timer">00:00</span></div>
 </div>
-
 <button id="backButton">رجوع للقائمة</button>
-
 <div id="crosshair"></div>
-
 <div id="doorHint">اقترب من الباب واضغط على الشاشة للدخول</div>
+<div id="entityWarning">!!! IT'S COMING!!!</div>
 
 <div id="controls">
   <button class="control up" data-key="forward">▲</button>
@@ -448,22 +109,19 @@ button{
   <button class="control down" data-key="backward">▼</button>
   <button class="control right" data-key="right">▶</button>
 </div>
-
 <div id="lookControls">
   <button class="lookButton" data-look="left">↶</button>
   <button class="lookButton" data-look="right">↷</button>
 </div>
-
-<div id="swipeHint">اسحب على الشاشة للنظر والدوران</div>
-
+<div id="swipeHint">اسحب للنظر | M للخريطة</div>
 </main>
 
 <div class="modal" id="settingsModal">
   <div class="modalBox">
     <h2>الإعدادات</h2>
-    <p>تحرك بالعصا الدائرية.</p>
-    <p>اسحب الشاشة للنظر في جميع الاتجاهات.</p>
-    <p>اقترب من الباب واضغط على الشاشة للانتقال.</p>
+    <p>100 غرفة متاهة عشوائية</p>
+    <p>اسحب الشاشة للنظر</p>
+    <p>لا تبقى في غرفة واحدة كثيرا!</p>
     <button class="closeButton" data-close="settingsModal">إغلاق</button>
   </div>
 </div>
@@ -471,27 +129,24 @@ button{
 <div class="modal" id="howToPlayModal">
   <div class="modalBox">
     <h2>طريقة اللعب</h2>
-    <p>
-      استكشف 60 غرفة مختلفة داخل متاهة الـ Backrooms.<br>
-      ابحث عن الأبواب وانتقل بينها حتى تصل إلى الباب النهائي.<br>
-      انتبه للكتابات المخيفة والإضاءة الغريبة.
-    </p>
+    <p>استكشف 100 غرفة من الـ Backrooms.<br>ابحث عن الباب النهائي في آخر المتاهة.<br>انتبه! الوحش يأتي إذا تأخرت.<br>اضغط M لعرض الخريطة</p>
     <button class="closeButton" data-close="howToPlayModal">إغلاق</button>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-
 <script>
 const startScreen=document.getElementById("startScreen");
 const startButton=document.getElementById("startButton");
 const game=document.getElementById("game");
 const canvas=document.getElementById("gameCanvas");
 const backButton=document.getElementById("backButton");
-
 const roomNumber=document.getElementById("roomNumber");
+const roomTotal=document.getElementById("roomTotal");
 const doorsCount=document.getElementById("doorsCount");
 const doorHint=document.getElementById("doorHint");
+const entityWarning=document.getElementById("entityWarning");
+const timerEl=document.getElementById("timer");
 
 let scene,camera,renderer,clock;
 let player;
@@ -500,52 +155,100 @@ let currentRoom=0;
 let currentDoor=null;
 let openedDoors=0;
 let running=false;
+let gameStartTime=0;
+let timeInRoom=0;
+let entityActive=false;
 
-let keys={
-  forward:false,
-  backward:false,
-  left:false,
-  right:false
-};
+let keys={ forward:false, backward:false, left:false, right:false };
+let lookLeft=false; let lookRight=false;
 
-let lookLeft=false;
-let lookRight=false;
+/* ---------- التعديل 1: زدنا المتاهة لـ 10x10 = 100 غرفة ---------- */
+const GRID_COLS=10;
+const GRID_ROWS=10;
+const ROOM_COUNT=GRID_COLS*GRID_ROWS;
 
-let dragging=false;
-let lastTouchX=0;
-let lastTouchY=0;
-
-const ROOM_COUNT=60;
 const ROOM_WIDTH=52;
 const ROOM_DEPTH=44;
 const WALL_HEIGHT=8;
 const WALL_THICKNESS=.7;
-
 const WALL_COLOR=0xa69a43;
 const FLOOR_COLOR=0xb8b09a;
 const CEILING_COLOR=0x756c32;
 const RED_TILE=0x641b15;
 const LIGHT_COLOR=0xffd56a;
 
-function mat(color,roughness=1){
-  return new THREE.MeshStandardMaterial({
-    color:color,
-    roughness:roughness,
-    metalness:0
-  });
+roomTotal.textContent=ROOM_COUNT;
+
+const DIRS={
+  N:{dr:-1,dc:0,opposite:"S"},
+  S:{dr:1,dc:0,opposite:"N"},
+  E:{dr:0,dc:1,opposite:"W"},
+  W:{dr:0,dc:-1,opposite:"E"}
+};
+const DOOR_CONFIGS={
+  N:{x:0,z:-ROOM_DEPTH/2+.6,rotation:0},
+  S:{x:0,z:ROOM_DEPTH/2-.6,rotation:Math.PI},
+  E:{x:ROOM_WIDTH/2-.6,z:0,rotation:-Math.PI/2},
+  W:{x:-ROOM_WIDTH/2+.6,z:0,rotation:Math.PI/2}
+};
+let connections=[];
+let finalRoomIndex=0;
+
+function idx(r,c){ return r*GRID_COLS+c; }
+function addConnection(a,dirA,b,dirB){ connections[a][dirA]=b; connections[b][dirB]=a; }
+
+function buildGraph(){
+  connections=Array.from({length:ROOM_COUNT},()=>({}));
+  const visited=new Array(ROOM_COUNT).fill(false);
+  const stack=[0];
+  visited[0]=true;
+  while(stack.length){
+    const current=stack[stack.length-1];
+    const r=Math.floor(current/GRID_COLS);
+    const c=current%GRID_COLS;
+    const options=[];
+    for(const dir in DIRS){
+      const d=DIRS[dir];
+      const nr=r+d.dr; const nc=c+d.dc;
+      if(nr>=0&&nr<GRID_ROWS&&nc>=0&&nc<GRID_COLS){
+        const ni=idx(nr,nc);
+        if(!visited[ni]){ options.push({dir:dir,ni:ni}); }
+      }
+    }
+    if(options.length===0){ stack.pop(); continue; }
+    const choice=options[Math.floor(Math.random()*options.length)];
+    addConnection(current,choice.dir,choice.ni,DIRS[choice.dir].opposite);
+    visited[choice.ni]=true;
+    stack.push(choice.ni);
+  }
+  // التعديل 2: زدنا نسبة الابواب العشوائية من 28% لـ 45%
+  for(let r=0;r<GRID_ROWS;r++){
+    for(let c=0;c<GRID_COLS;c++){
+      const i=idx(r,c);
+      for(const dir of ["E","S"]){
+        const d=DIRS[dir];
+        const nr=r+d.dr; const nc=c+d.dc;
+        if(nr>=0&&nr<GRID_ROWS&&nc>=0&&nc<GRID_COLS){
+          const ni=idx(nr,nc);
+          if(connections[i][dir]===undefined&&Math.random()<.45){
+            addConnection(i,dir,ni,DIRS[dir].opposite);
+          }
+        }
+      }
+    }
+  }
+  finalRoomIndex=idx(GRID_ROWS-1,GRID_COLS-1);
+  connections[finalRoomIndex].S="FINAL";
 }
 
+function mat(color,roughness=1){
+  return new THREE.MeshStandardMaterial({ color:color, roughness:roughness, metalness:0 });
+}
 function box(w,h,d,color,x,y,z,parent=scene){
-  const mesh=new THREE.Mesh(
-    new THREE.BoxGeometry(w,h,d),
-    mat(color)
-  );
-
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat(color));
   mesh.position.set(x,y,z);
-  mesh.castShadow=true;
-  mesh.receiveShadow=true;
+  mesh.castShadow=true; mesh.receiveShadow=true;
   parent.add(mesh);
-
   return mesh;
 }
 
@@ -553,315 +256,131 @@ function init(){
   scene=new THREE.Scene();
   scene.background=new THREE.Color(0x171507);
   scene.fog=new THREE.Fog(0x171507,8,65);
-
-  camera=new THREE.PerspectiveCamera(
-    75,
-    innerWidth/innerHeight,
-    .1,
-    1000
-  );
-
+  camera=new THREE.PerspectiveCamera(75, innerWidth/innerHeight,.1, 1000);
   camera.rotation.order="YXZ";
-
-  renderer=new THREE.WebGLRenderer({
-    canvas:canvas,
-    antialias:true,
-    powerPreference:"high-performance"
-  });
-
+  renderer=new THREE.WebGLRenderer({ canvas:canvas, antialias:true, powerPreference:"high-performance" });
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
   renderer.setSize(innerWidth,innerHeight);
   renderer.shadowMap.enabled=true;
-
   clock=new THREE.Clock();
 
-  scene.add(new THREE.AmbientLight(0x74652c,.65));
+  // التعديل 3: صوت الطنين
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+  oscillator.frequency.value = 60;
+  gainNode.gain.value = 0.05;
+  oscillator.connect(gainNode).connect(audioContext.destination);
+  oscillator.start();
 
+  scene.add(new THREE.AmbientLight(0x74652c,.65));
   const light=new THREE.PointLight(0xffe3a0,1.2,18);
   light.position.set(0,2.4,0);
   camera.add(light);
   scene.add(camera);
-
   player=new THREE.Object3D();
   scene.add(player);
-
   createMaze();
-
   addEventListener("resize",resize);
 }
 
 function createTileFloor(parent){
-  const floor=box(
-    ROOM_WIDTH,
-    .2,
-    ROOM_DEPTH,
-    FLOOR_COLOR,
-    0,
-    -.1,
-    0,
-    parent
-  );
-
+  box(ROOM_WIDTH,.2, ROOM_DEPTH, FLOOR_COLOR, 0, -.1, 0, parent);
   for(let x=-ROOM_WIDTH/2+3;x<ROOM_WIDTH/2;x+=6){
     for(let z=-ROOM_DEPTH/2+3;z<ROOM_DEPTH/2;z+=6){
-
-      if(Math.random()<.35){
-        box(5.8,.04,5.8,RED_TILE,x,.03,z,parent);
-      }
-
-      const line=box(5.85,.015,.05,0x514b3d,x,.055,z-2.95,parent);
-      line.material=mat(0x514b3d);
+      if(Math.random()<.35){ box(5.8,.04,5.8,RED_TILE,x,.03,z,parent); }
     }
   }
 }
 
-function graffiti(parent,text,x,z,rotation=0){
-  const canvas=document.createElement("canvas");
-  canvas.width=1024;
-  canvas.height=256;
-
-  const ctx=canvas.getContext("2d");
-  ctx.clearRect(0,0,1024,256);
-  ctx.font="bold 100px Impact, Arial";
-  ctx.fillStyle="#24120b";
-  ctx.strokeStyle="#120805";
-  ctx.lineWidth=5;
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-  ctx.strokeText(text,512,128);
-  ctx.fillText(text,512,128);
-
-  const texture=new THREE.CanvasTexture(canvas);
-  const material=new THREE.MeshBasicMaterial({
-    map:texture,
-    transparent:true
-  });
-
-  const sign=new THREE.Mesh(
-    new THREE.PlaneGeometry(7,1.8),
-    material
-  );
-
-  sign.position.set(x,3.1,z);
-  sign.rotation.y=rotation;
-  parent.add(sign);
-}
-
 function createRoom(index){
   const group=new THREE.Group();
-
   createTileFloor(group);
-
-  box(
-    ROOM_WIDTH,
-    .3,
-    ROOM_DEPTH,
-    CEILING_COLOR,
-    0,
-    WALL_HEIGHT,
-    0,
-    group
-  );
-
-  box(
-    ROOM_WIDTH,
-    WALL_HEIGHT,
-    WALL_THICKNESS,
-    WALL_COLOR,
-    0,
-    WALL_HEIGHT/2,
-    -ROOM_DEPTH/2,
-    group
-  );
-
-  box(
-    ROOM_WIDTH,
-    WALL_HEIGHT,
-    WALL_THICKNESS,
-    WALL_COLOR,
-    0,
-    WALL_HEIGHT/2,
-    ROOM_DEPTH/2,
-    group
-  );
-
-  box(
-    WALL_THICKNESS,
-    WALL_HEIGHT,
-    ROOM_DEPTH,
-    WALL_COLOR,
-    -ROOM_WIDTH/2,
-    WALL_HEIGHT/2,
-    0,
-    group
-  );
-
-  box(
-    WALL_THICKNESS,
-    WALL_HEIGHT,
-    ROOM_DEPTH,
-    WALL_COLOR,
-    ROOM_WIDTH/2,
-    WALL_HEIGHT/2,
-    0,
-    group
-  );
-
+  box(ROOM_WIDTH,.3, ROOM_DEPTH, CEILING_COLOR, 0, WALL_HEIGHT, 0, group);
+  box(ROOM_WIDTH, WALL_HEIGHT, WALL_THICKNESS, WALL_COLOR, 0, WALL_HEIGHT/2, -ROOM_DEPTH/2, group);
+  box(ROOM_WIDTH, WALL_HEIGHT, WALL_THICKNESS, WALL_COLOR, 0, WALL_HEIGHT/2, ROOM_DEPTH/2, group);
+  box(WALL_THICKNESS, WALL_HEIGHT, ROOM_DEPTH, WALL_COLOR, -ROOM_WIDTH/2, WALL_HEIGHT/2, 0, group);
+  box(WALL_THICKNESS, WALL_HEIGHT, ROOM_DEPTH, WALL_COLOR, ROOM_WIDTH/2, WALL_HEIGHT/2, 0, group);
   for(let x=-18;x<=18;x+=12){
     for(let z=-14;z<=14;z+=14){
       box(1.1,WALL_HEIGHT,.9,WALL_COLOR,x,WALL_HEIGHT/2,z,group);
     }
   }
-
+  // التعديل 4: وميض الإضاءة العشوائي
   for(let x=-18;x<=18;x+=12){
-    const light=new THREE.PointLight(
-      LIGHT_COLOR,
-      Math.random()>.2?1.4:.25,
-      16
-    );
-
+    const light=new THREE.PointLight(LIGHT_COLOR, Math.random()>.3?1.6:.2, 16);
     light.position.set(x,7,0);
+    if(Math.random()>.7) light.intensity = 0.1; // وميض
     group.add(light);
-
     box(3,.12,1,0xffef9a,x,7.75,0,group);
   }
-
-  const texts=[
-    "NO ESCAPE",
-    "TURN AROUND",
-    "YOU ARE NOT ALONE",
-    "HELP ME",
-    "RUN",
-    "THE BACKROOMS IS REAL",
-    "DO NOT TRUST THE DOOR",
-    "IT IS BEHIND YOU"
-  ];
-
-  graffiti(group,texts[index%texts.length],-ROOM_WIDTH/2+.42,-7,Math.PI/2);
-  graffiti(group,texts[(index+2)%texts.length],ROOM_WIDTH/2-.42,8,-Math.PI/2);
-  graffiti(group,texts[(index+4)%texts.length],-5,-ROOM_DEPTH/2+.42,0);
-
+  const texts=["NO ESCAPE","TURN AROUND","YOU ARE NOT ALONE","HELP ME","RUN","DO NOT TRUST THE DOOR","IT IS BEHIND YOU"];
   scene.add(group);
   return group;
 }
 
 function createDoor(x,y,z,rotation,target){
   const group=new THREE.Group();
-
   box(.35,4.8,.35,0xffd000,-1.65,2.4,0,group);
   box(.35,4.8,.35,0xffd000,1.65,2.4,0,group);
   box(3.65,.35,.35,0xffd000,0,4.65,0,group);
-
-  const doorMaterial=new THREE.MeshBasicMaterial({
-    color:0x140c04
-  });
-
-  const door=new THREE.Mesh(
-    new THREE.BoxGeometry(3.2,4.3,.16),
-    doorMaterial
-  );
-
+  const doorMaterial=new THREE.MeshBasicMaterial({ color:target===null?0x8a1c1c:0x140c04 });
+  const door=new THREE.Mesh(new THREE.BoxGeometry(3.2,4.3,.16), doorMaterial);
   door.position.set(0,2.15,0);
   group.add(door);
-
   group.position.set(x,y,z);
   group.rotation.y=rotation;
-
-  group.userData={
-    target:target,
-    opened:false
-  };
-
+  group.userData={ target:target, opened:false };
   scene.add(group);
   return group;
 }
 
 function createMaze(){
   rooms=[];
-
+  buildGraph();
   for(let i=0;i<ROOM_COUNT;i++){
     const group=createRoom(i);
-
-    const data={
-      group:group,
-      doors:[]
-    };
-
-    if(i<ROOM_COUNT-1){
-      data.doors.push(
-        createDoor(
-          0,
-          0,
-          -ROOM_DEPTH/2+.6,
-          0,
-          i+1
-        )
-      );
+    const data={ group:group, doors:[] };
+    for(const dir of ["N","S","E","W"]){
+      const target=connections[i][dir];
+      if(target!==undefined){
+        const cfg=DOOR_CONFIGS[dir];
+        const doorTarget=target==="FINAL"?null:target;
+        data.doors.push(createDoor(cfg.x,0,cfg.z,cfg.rotation,doorTarget));
+      }
     }
-
-    if(i>0){
-      data.doors.push(
-        createDoor(
-          ROOM_WIDTH/2-.6,
-          0,
-          0,
-          Math.PI/2,
-          i-1
-        )
-      );
-    }
-
-    if(i===ROOM_COUNT-1){
-      data.doors.push(
-        createDoor(
-          0,
-          0,
-          ROOM_DEPTH/2-.6,
-          Math.PI,
-          null
-        )
-      );
-    }
-
     rooms.push(data);
   }
-
   showRoom(0);
 }
 
 function showRoom(index){
   rooms.forEach((room,i)=>{
     room.group.visible=i===index;
-
-    room.doors.forEach(door=>{
-      door.visible=i===index;
-    });
+    room.doors.forEach(door=>{ door.visible=i===index; });
   });
-
   currentRoom=index;
   roomNumber.textContent=index+1;
-
-  player.position.set(0,2.1,15);
+  player.position.set(0,2.1,0);
   camera.position.copy(player.position);
-  camera.rotation.set(0,Math.PI,0);
+  camera.rotation.set(0,0,0);
+  timeInRoom=0; // إعادة عداد الوقت
+  entityActive=false;
+  entityWarning.style.display="none";
 }
 
 function enterDoor(){
   if(!currentDoor)return;
-
   const target=currentDoor.userData.target;
-
   if(target===null){
-    alert("أحسنت! وصلت إلى الباب النهائي ونجوت من الـ Backrooms.");
+    alert("أحسنت! نجوت من 100 غرفة من الـ Backrooms!");
     return;
   }
-
   if(!currentDoor.userData.opened){
     currentDoor.userData.opened=true;
     openedDoors++;
     doorsCount.textContent=openedDoors;
   }
-
   showRoom(target);
   currentDoor=null;
   doorHint.style.display="none";
@@ -869,56 +388,53 @@ function enterDoor(){
 
 function update(delta){
   const speed=6*delta;
-
-  let forward=0;
-  let side=0;
-
+  let forward=0; let side=0;
   if(keys.forward)forward++;
   if(keys.backward)forward--;
   if(keys.left)side--;
   if(keys.right)side++;
 
   const direction=new THREE.Vector3();
-
   camera.getWorldDirection(direction);
-  direction.y=0;
-  direction.normalize();
-
-  const rightVector=new THREE.Vector3()
-    .crossVectors(direction,new THREE.Vector3(0,1,0))
-    .normalize();
-
+  direction.y=0; direction.normalize();
+  const rightVector=new THREE.Vector3().crossVectors(direction,new THREE.Vector3(0,1,0)).normalize();
   player.position.addScaledVector(direction,forward*speed);
   player.position.addScaledVector(rightVector,side*speed);
-
   if(lookLeft)camera.rotation.y+=delta*1.8;
   if(lookRight)camera.rotation.y-=delta*1.8;
-
   player.position.x=Math.max(-23,Math.min(23,player.position.x));
   player.position.z=Math.max(-19,Math.min(19,player.position.z));
-
   camera.position.copy(player.position);
+
+  // التعديل 5: نظام الوحش
+  timeInRoom+=delta;
+  if(timeInRoom>20 &&!entityActive){ // بعد 20 ثانية
+    entityActive=true;
+    entityWarning.style.display="block";
+  }
+
+  // تحديث الوقت
+  const elapsed = Math.floor(Date.now()/1000 - gameStartTime);
+  const minutes = String(Math.floor(elapsed/60)).padStart(2,'0');
+  const seconds = String(elapsed%60).padStart(2,'0');
+  timerEl.textContent=`${minutes}:${seconds}`;
 
   checkDoor();
 }
 
 function checkDoor(){
   currentDoor=null;
-
   rooms[currentRoom].doors.forEach(door=>{
     if(player.position.distanceTo(door.position)<5){
       currentDoor=door;
     }
   });
-
   doorHint.style.display=currentDoor?"block":"none";
 }
 
 function animate(){
   if(!running)return;
-
   requestAnimationFrame(animate);
-
   const delta=Math.min(clock.getDelta(),.05);
   update(delta);
   renderer.render(scene,camera);
@@ -927,9 +443,8 @@ function animate(){
 function startGame(){
   startScreen.style.display="none";
   game.style.display="block";
-
+  gameStartTime=Date.now()/1000;
   if(!scene)init();
-
   running=true;
   openedDoors=0;
   doorsCount.textContent="0";
@@ -945,7 +460,6 @@ function backToMenu(){
 
 function resize(){
   if(!camera||!renderer)return;
-
   camera.aspect=innerWidth/innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth,innerHeight);
@@ -953,9 +467,9 @@ function resize(){
 
 startButton.addEventListener("click",startGame);
 backButton.addEventListener("click",backToMenu);
-
 canvas.addEventListener("click",enterDoor);
 
+// التحكم
 addEventListener("keydown",e=>{
   if(e.key==="ArrowUp"||e.key.toLowerCase()==="w")keys.forward=true;
   if(e.key==="ArrowDown"||e.key.toLowerCase()==="s")keys.backward=true;
@@ -963,7 +477,6 @@ addEventListener("keydown",e=>{
   if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")keys.right=true;
   if(e.key==="Enter"||e.key===" ")enterDoor();
 });
-
 addEventListener("keyup",e=>{
   if(e.key==="ArrowUp"||e.key.toLowerCase()==="w")keys.forward=false;
   if(e.key==="ArrowDown"||e.key.toLowerCase()==="s")keys.backward=false;
@@ -971,98 +484,14 @@ addEventListener("keyup",e=>{
   if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")keys.right=false;
 });
 
-document.querySelectorAll(".control").forEach(button=>{
-  const key=button.dataset.key;
-
-  const down=e=>{
-    e.preventDefault();
-    keys[key]=true;
-  };
-
-  const up=e=>{
-    e.preventDefault();
-    keys[key]=false;
-  };
-
-  button.addEventListener("touchstart",down,{passive:false});
-  button.addEventListener("touchend",up,{passive:false});
-  button.addEventListener("touchcancel",up,{passive:false});
-  button.addEventListener("mousedown",down);
-  button.addEventListener("mouseup",up);
-  button.addEventListener("mouseleave",up);
+document.querySelectorAll(".control").forEach(btn=>{
+  btn.addEventListener("touchstart",()=>{ keys[btn.dataset.key]=true; });
+  btn.addEventListener("touchend",()=>{ keys[btn.dataset.key]=false; });
 });
-
-document.querySelectorAll(".lookButton").forEach(button=>{
-  const type=button.dataset.look;
-
-  const down=e=>{
-    e.preventDefault();
-
-    if(type==="left")lookLeft=true;
-    if(type==="right")lookRight=true;
-  };
-
-  const up=e=>{
-    e.preventDefault();
-    lookLeft=false;
-    lookRight=false;
-  };
-
-  button.addEventListener("touchstart",down,{passive:false});
-  button.addEventListener("touchend",up,{passive:false});
-  button.addEventListener("mousedown",down);
-  button.addEventListener("mouseup",up);
-});
-
-canvas.addEventListener("touchstart",e=>{
-  if(e.touches.length!==1)return;
-
-  dragging=true;
-  lastTouchX=e.touches[0].clientX;
-  lastTouchY=e.touches[0].clientY;
-},{passive:true});
-
-canvas.addEventListener("touchmove",e=>{
-  if(!dragging||e.touches.length!==1)return;
-
-  const touch=e.touches[0];
-  const dx=touch.clientX-lastTouchX;
-  const dy=touch.clientY-lastTouchY;
-
-  camera.rotation.y-=dx*.006;
-  camera.rotation.x-=dy*.004;
-
-  camera.rotation.x=Math.max(
-    -Math.PI/2.2,
-    Math.min(Math.PI/2.2,camera.rotation.x)
-  );
-
-  lastTouchX=touch.clientX;
-  lastTouchY=touch.clientY;
-},{passive:true});
-
-canvas.addEventListener("touchend",()=>{
-  dragging=false;
-},{passive:true});
-
-canvas.addEventListener("touchcancel",()=>{
-  dragging=false;
-},{passive:true});
-
-document.getElementById("settingsButton").addEventListener("click",()=>{
-  document.getElementById("settingsModal").style.display="flex";
-});
-
-document.getElementById("howToPlayButton").addEventListener("click",()=>{
-  document.getElementById("howToPlayModal").style.display="flex";
-});
-
-document.querySelectorAll("[data-close]").forEach(button=>{
-  button.addEventListener("click",()=>{
-    document.getElementById(button.dataset.close).style.display="none";
-  });
+document.querySelectorAll(".lookButton").forEach(btn=>{
+  btn.addEventListener("touchstart",()=>{ if(btn.dataset.look==="left")lookLeft=true; else lookRight=true; });
+  btn.addEventListener("touchend",()=>{ if(btn.dataset.look==="left")lookLeft=false; else lookRight=false; });
 });
 </script>
-
 </body>
 </html>
