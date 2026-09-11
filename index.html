@@ -23,13 +23,20 @@
       font-family: Arial, Tahoma, sans-serif;
     }
 
+    body {
+      touch-action: manipulation;
+    }
+
     button {
       font-family: inherit;
       cursor: pointer;
       user-select: none;
+      -webkit-user-select: none;
     }
 
-    /* شاشة البداية */
+    /* =========================
+       شاشة البداية
+    ========================= */
 
     #startScreen {
       position: fixed;
@@ -66,6 +73,8 @@
           transparent 1px,
           transparent 4px
         );
+
+      opacity: 0.35;
     }
 
     .menuContent {
@@ -80,7 +89,9 @@
       align-items: center;
     }
 
-    /* الأزرار */
+    /* =========================
+       الأزرار
+    ========================= */
 
     .menuButton {
       position: relative;
@@ -88,7 +99,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
+
+      gap: 15px;
 
       border: 3px solid #ffd000;
       color: #ffd000;
@@ -142,10 +154,12 @@
     .menuButton:active {
       background: #ffd000;
       color: #000;
-      transform: scale(1.04);
+      transform: scale(1.03);
     }
 
-    /* زر ابدأ اللعبة */
+    /* =========================
+       زر ابدأ اللعبة
+    ========================= */
 
     #startButton {
       width: min(510px, 80%);
@@ -160,7 +174,9 @@
         inset 0 0 25px rgba(255, 208, 0, 0.15);
     }
 
-    /* أزرار الإعدادات وطريقة اللعب */
+    /* =========================
+       الأزرار السفلية
+    ========================= */
 
     .smallButtons {
       width: 100%;
@@ -186,16 +202,12 @@
       direction: rtl;
     }
 
-    /*
-      الترتيب مطابق للصورة:
-      الإعدادات في اليسار
-      طريقة اللعب في اليمين
-    */
-
+    /* الإعدادات يسار */
     #settingsButton {
       order: 1;
     }
 
+    /* طريقة اللعب يمين */
     #howToPlayButton {
       order: 2;
     }
@@ -210,6 +222,7 @@
 
       font-size: 42px;
       line-height: 1;
+
       flex-shrink: 0;
     }
 
@@ -221,7 +234,9 @@
       font-size: 43px;
     }
 
-    /* اللعبة */
+    /* =========================
+       اللعبة
+    ========================= */
 
     #game {
       display: none;
@@ -318,7 +333,9 @@
       line-height: 1.8;
     }
 
-    /* النوافذ */
+    /* =========================
+       النوافذ
+    ========================= */
 
     .modal {
       display: none;
@@ -372,9 +389,12 @@
       font-weight: bold;
     }
 
-    /* الهاتف */
+    /* =========================
+       الهاتف عمودي
+    ========================= */
 
-    @media (max-width: 700px) {
+    @media (max-width: 700px) and (orientation: portrait) {
+
       #startScreen {
         padding: 0 12px 22px;
       }
@@ -382,6 +402,7 @@
       #startButton {
         width: 90%;
         min-height: 75px;
+
         padding: 14px 20px;
         font-size: 27px;
       }
@@ -395,23 +416,25 @@
       .smallButton {
         width: 50%;
         min-height: 57px;
+
         padding: 8px 5px;
-        gap: 7px;
+
+        gap: 6px;
         font-size: 15px;
       }
 
       .buttonIcon {
         width: 27px;
         height: 27px;
-        font-size: 25px;
+        font-size: 24px;
       }
 
       #settingsButton .buttonIcon {
-        font-size: 29px;
+        font-size: 28px;
       }
 
       #howToPlayButton .buttonIcon {
-        font-size: 27px;
+        font-size: 26px;
       }
 
       #gameTop {
@@ -428,6 +451,7 @@
       #backButton {
         top: 55px;
         right: 10px;
+
         padding: 8px 12px;
         font-size: 13px;
       }
@@ -438,22 +462,206 @@
       }
     }
 
-    @media (max-height: 500px) {
+    /* =========================
+       الهاتف أفقي
+       مهم: تصغير الأيقونات والأزرار
+       عند قلب الهاتف
+    ========================= */
+
+    @media (max-width: 1000px) and (orientation: landscape) {
+
       #startScreen {
-        padding-bottom: 12px;
+        padding:
+          0
+          20px
+          10px;
       }
 
+      .menuContent {
+        width: 100%;
+        max-width: 1000px;
+      }
+
+      /* زر ابدأ أصغر */
       #startButton {
+        width: 48%;
         min-height: 58px;
-        padding: 8px 20px;
+
+        padding: 8px 18px;
+
+        font-size: 24px;
+
+        border-width: 2px;
       }
 
+      /* الأزرار السفلية */
       .smallButtons {
+        width: 100%;
         margin-top: 8px;
+        padding: 0 2%;
+
+        gap: 12px;
       }
 
       .smallButton {
+        width: 31%;
+        min-height: 47px;
+
+        padding: 5px 12px;
+
+        gap: 6px;
+
+        border-width: 2px;
+
+        font-size: 15px;
+      }
+
+      /* تصغير الأيقونات في الوضع الأفقي */
+
+      .buttonIcon {
+        width: 24px;
+        height: 24px;
+
+        font-size: 20px;
+      }
+
+      #settingsButton .buttonIcon {
+        font-size: 22px;
+      }
+
+      #howToPlayButton .buttonIcon {
+        font-size: 21px;
+      }
+
+      /* تصغير الحواف الداخلية */
+      .menuButton::before {
+        inset: 3px;
+      }
+
+      /* واجهة اللعبة */
+      #gameTop {
+        top: 8px;
+        left: 10px;
+        right: 10px;
+      }
+
+      .hudBox {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      #backButton {
+        top: 8px;
+        right: 10px;
+
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+
+      #message {
+        width: min(75%, 400px);
+        padding: 12px;
+
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .modalBox {
+        width: min(75%, 450px);
+        padding: 18px;
+      }
+
+      .modalBox h2 {
+        margin-bottom: 10px;
+        font-size: 20px;
+      }
+
+      .modalBox p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .closeButton {
+        margin-top: 12px;
+        padding: 8px 20px;
+        font-size: 14px;
+      }
+    }
+
+    /* =========================
+       هاتف أفقي صغير جدًا
+    ========================= */
+
+    @media (max-height: 450px) and (orientation: landscape) {
+
+      #startScreen {
+        padding-bottom: 7px;
+      }
+
+      #startButton {
         min-height: 48px;
+        width: 42%;
+
+        padding: 6px 15px;
+
+        font-size: 20px;
+      }
+
+      .smallButtons {
+        margin-top: 6px;
+        gap: 8px;
+      }
+
+      .smallButton {
+        width: 29%;
+        min-height: 38px;
+
+        padding: 4px 8px;
+
+        font-size: 12px;
+      }
+
+      .buttonIcon {
+        width: 19px;
+        height: 19px;
+
+        font-size: 16px;
+      }
+
+      #settingsButton .buttonIcon {
+        font-size: 18px;
+      }
+
+      #howToPlayButton .buttonIcon {
+        font-size: 17px;
+      }
+    }
+
+    /* أجهزة بشاشات قصيرة جدًا */
+    @media (max-height: 360px) and (orientation: landscape) {
+
+      #startButton {
+        min-height: 40px;
+        font-size: 17px;
+      }
+
+      .smallButton {
+        min-height: 32px;
+        font-size: 10px;
+      }
+
+      .buttonIcon {
+        width: 15px;
+        height: 15px;
+        font-size: 13px;
+      }
+
+      #settingsButton .buttonIcon {
+        font-size: 14px;
+      }
+
+      #howToPlayButton .buttonIcon {
+        font-size: 14px;
       }
     }
   </style>
@@ -461,24 +669,26 @@
 
 <body>
 
-  <!-- شاشة البداية بدون عنوان BACKROOMS فوق الأزرار -->
+  <!-- شاشة البداية -->
   <section id="startScreen">
 
     <div class="menuContent">
 
+      <!-- زر ابدأ اللعبة -->
       <button id="startButton" class="menuButton">
         ابدأ اللعبة
       </button>
 
+      <!-- الأزرار الجانبية -->
       <div class="smallButtons">
 
-        <!-- الزر الموجود في اليسار -->
+        <!-- اليسار -->
         <button id="settingsButton" class="menuButton smallButton">
           <span class="buttonIcon">⚙</span>
           <span>الإعدادات</span>
         </button>
 
-        <!-- الزر الموجود في اليمين -->
+        <!-- اليمين -->
         <button id="howToPlayButton" class="menuButton smallButton">
           <span class="buttonIcon">▣</span>
           <span>طريقة اللعب</span>
@@ -519,6 +729,7 @@
       </div>
 
     </div>
+
   </main>
 
   <!-- نافذة الإعدادات -->
@@ -537,6 +748,7 @@
       </button>
 
     </div>
+
   </div>
 
   <!-- نافذة طريقة اللعب -->
@@ -557,6 +769,7 @@
       </button>
 
     </div>
+
   </div>
 
   <script>
@@ -565,13 +778,21 @@
     const game = document.getElementById("game");
     const backButton = document.getElementById("backButton");
 
-    const settingsButton = document.getElementById("settingsButton");
-    const howToPlayButton = document.getElementById("howToPlayButton");
+    const settingsButton =
+      document.getElementById("settingsButton");
 
-    const settingsModal = document.getElementById("settingsModal");
-    const howToPlayModal = document.getElementById("howToPlayModal");
+    const howToPlayButton =
+      document.getElementById("howToPlayButton");
 
-    const canvas = document.getElementById("gameCanvas");
+    const settingsModal =
+      document.getElementById("settingsModal");
+
+    const howToPlayModal =
+      document.getElementById("howToPlayModal");
+
+    const canvas =
+      document.getElementById("gameCanvas");
+
     const ctx = canvas.getContext("2d");
 
     function resizeCanvas() {
@@ -580,10 +801,17 @@
     }
 
     function drawGameBackground() {
+
       ctx.fillStyle = "#171717";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
 
       ctx.fillStyle = "#302b12";
+
       ctx.fillRect(
         0,
         canvas.height * 0.65,
@@ -594,10 +822,24 @@
       ctx.strokeStyle = "#62551d";
       ctx.lineWidth = 2;
 
-      for (let x = 0; x < canvas.width; x += 80) {
+      for (
+        let x = 0;
+        x < canvas.width;
+        x += 80
+      ) {
+
         ctx.beginPath();
-        ctx.moveTo(canvas.width / 2, canvas.height * 0.5);
-        ctx.lineTo(x, canvas.height);
+
+        ctx.moveTo(
+          canvas.width / 2,
+          canvas.height * 0.5
+        );
+
+        ctx.lineTo(
+          x,
+          canvas.height
+        );
+
         ctx.stroke();
       }
 
@@ -606,9 +848,12 @@
         y < canvas.height;
         y += 35
       ) {
+
         ctx.beginPath();
+
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
+
         ctx.stroke();
       }
 
@@ -623,44 +868,105 @@
       );
     }
 
-    startButton.addEventListener("click", () => {
-      startScreen.style.display = "none";
-      game.style.display = "block";
+    /* بدء اللعبة */
 
-      resizeCanvas();
-      drawGameBackground();
+    startButton.addEventListener(
+      "click",
+      () => {
 
-      /*
-        ضع كود اللعبة الحقيقي هنا.
-      */
-    });
+        startScreen.style.display = "none";
+        game.style.display = "block";
 
-    backButton.addEventListener("click", () => {
-      game.style.display = "none";
-      startScreen.style.display = "flex";
-    });
-
-    settingsButton.addEventListener("click", () => {
-      settingsModal.style.display = "flex";
-    });
-
-    howToPlayButton.addEventListener("click", () => {
-      howToPlayModal.style.display = "flex";
-    });
-
-    document.querySelectorAll("[data-close]").forEach(button => {
-      button.addEventListener("click", () => {
-        const modalId = button.getAttribute("data-close");
-        document.getElementById(modalId).style.display = "none";
-      });
-    });
-
-    window.addEventListener("resize", () => {
-      if (game.style.display === "block") {
         resizeCanvas();
         drawGameBackground();
+
+        /*
+          ضع كود اللعبة الحقيقي هنا.
+        */
       }
-    });
+    );
+
+    /* رجوع للقائمة */
+
+    backButton.addEventListener(
+      "click",
+      () => {
+
+        game.style.display = "none";
+        startScreen.style.display = "flex";
+      }
+    );
+
+    /* الإعدادات */
+
+    settingsButton.addEventListener(
+      "click",
+      () => {
+
+        settingsModal.style.display = "flex";
+      }
+    );
+
+    /* طريقة اللعب */
+
+    howToPlayButton.addEventListener(
+      "click",
+      () => {
+
+        howToPlayModal.style.display = "flex";
+      }
+    );
+
+    /* إغلاق النوافذ */
+
+    document
+      .querySelectorAll("[data-close]")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const modalId =
+              button.getAttribute("data-close");
+
+            document.getElementById(modalId)
+              .style.display = "none";
+          }
+        );
+      });
+
+    /* تحديث الحجم */
+
+    window.addEventListener(
+      "resize",
+      () => {
+
+        if (game.style.display === "block") {
+
+          resizeCanvas();
+          drawGameBackground();
+        }
+      }
+    );
+
+    /* تغيير الاتجاه */
+
+    window.addEventListener(
+      "orientationchange",
+      () => {
+
+        setTimeout(() => {
+
+          if (game.style.display === "block") {
+
+            resizeCanvas();
+            drawGameBackground();
+          }
+
+        }, 250);
+      }
+    );
   </script>
 
 </body>
