@@ -25,8 +25,8 @@
 
     button {
       font-family: inherit;
-      user-select: none;
       cursor: pointer;
+      user-select: none;
     }
 
     /* شاشة البداية */
@@ -34,23 +34,22 @@
     #startScreen {
       position: fixed;
       inset: 0;
-      width: 100%;
-      height: 100%;
+      z-index: 100;
+
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      padding: 0 20px 42px;
+
+      padding: 0 5% 7%;
 
       background:
         linear-gradient(
           to bottom,
           rgba(0, 0, 0, 0.05),
-          rgba(0, 0, 0, 0.25) 45%,
-          rgba(0, 0, 0, 0.92)
+          rgba(0, 0, 0, 0.18) 50%,
+          rgba(0, 0, 0, 0.88) 100%
         ),
         url("backrooms-menu.png") center center / cover no-repeat;
-
-      z-index: 100;
     }
 
     #startScreen::after {
@@ -62,143 +61,177 @@
       background:
         repeating-linear-gradient(
           0deg,
-          rgba(255, 255, 255, 0.025) 0px,
+          rgba(255, 255, 255, 0.025) 0,
           rgba(255, 255, 255, 0.025) 1px,
           transparent 1px,
           transparent 4px
         );
-
-      opacity: 0.35;
     }
 
     .menuContent {
       position: relative;
       z-index: 2;
-      width: min(900px, 100%);
+
+      width: 100%;
+      max-width: 1400px;
 
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    .gameTitle {
-      margin-bottom: 14px;
+    /* الأزرار */
+
+    .menuButton {
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+
+      border: 3px solid #ffd000;
       color: #ffd000;
-      font-size: clamp(34px, 6vw, 82px);
-      font-weight: 900;
-      letter-spacing: 5px;
-      text-align: center;
+      background: rgba(0, 0, 0, 0.84);
 
-      text-shadow:
-        0 0 8px #ffd000,
-        0 0 25px rgba(255, 208, 0, 0.7),
-        4px 4px 0 #261b00;
-    }
-
-    .developerName {
-      margin-bottom: 25px;
-      color: #ffe36b;
-      font-size: clamp(13px, 2vw, 25px);
-      letter-spacing: 5px;
-      text-align: center;
-      text-shadow: 0 0 10px #000;
-    }
-
-    /* زر ابدأ اللعبة */
-
-    #startButton {
-      min-width: 300px;
-      max-width: 100%;
-      padding: 17px 42px;
-
-      border: 2px solid #ffd000;
-      border-radius: 10px;
-
-      background: rgba(0, 0, 0, 0.85);
-      color: #ffd000;
-
-      font-size: clamp(22px, 3vw, 30px);
       font-weight: bold;
+      text-align: center;
+
+      clip-path: polygon(
+        15px 0,
+        calc(100% - 15px) 0,
+        100% 15px,
+        100% calc(100% - 15px),
+        calc(100% - 15px) 100%,
+        15px 100%,
+        0 calc(100% - 15px),
+        0 15px
+      );
 
       box-shadow:
-        0 0 12px rgba(255, 208, 0, 0.7),
+        0 0 12px rgba(255, 208, 0, 0.5),
         inset 0 0 15px rgba(255, 208, 0, 0.12);
 
-      transition: 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
     }
 
-    #startButton:hover,
-    #startButton:active {
+    .menuButton::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+
+      border: 1px solid rgba(255, 208, 0, 0.35);
+      pointer-events: none;
+
+      clip-path: polygon(
+        10px 0,
+        calc(100% - 10px) 0,
+        100% 10px,
+        100% calc(100% - 10px),
+        calc(100% - 10px) 100%,
+        10px 100%,
+        0 calc(100% - 10px),
+        0 10px
+      );
+    }
+
+    .menuButton:hover,
+    .menuButton:active {
       background: #ffd000;
       color: #000;
       transform: scale(1.04);
     }
 
-    /* الأزرار الصغيرة */
+    /* زر ابدأ اللعبة */
+
+    #startButton {
+      width: min(510px, 80%);
+      min-height: 130px;
+
+      padding: 20px 35px;
+
+      font-size: clamp(30px, 4vw, 58px);
+
+      box-shadow:
+        0 0 18px rgba(255, 208, 0, 0.75),
+        inset 0 0 25px rgba(255, 208, 0, 0.15);
+    }
+
+    /* أزرار الإعدادات وطريقة اللعب */
 
     .smallButtons {
       width: 100%;
+
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      gap: 16px;
-      margin-top: 16px;
+
+      direction: ltr;
+
+      margin-top: 18px;
+      padding: 0 1%;
     }
 
     .smallButton {
-      min-width: 210px;
-      padding: 12px 22px;
+      width: 285px;
+      min-height: 88px;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
+      padding: 12px 20px;
 
-      border: 2px solid #ffd000;
-      border-radius: 8px;
+      font-size: clamp(20px, 2.2vw, 32px);
 
-      background: rgba(0, 0, 0, 0.82);
-      color: #ffd000;
-
-      font-size: clamp(15px, 2vw, 21px);
-      font-weight: bold;
-
-      box-shadow:
-        0 0 8px rgba(255, 208, 0, 0.35),
-        inset 0 0 10px rgba(255, 208, 0, 0.08);
-
-      transition: 0.2s ease;
+      direction: rtl;
     }
 
-    /* تصغير الأيقونات */
+    /*
+      الترتيب مطابق للصورة:
+      الإعدادات في اليسار
+      طريقة اللعب في اليمين
+    */
+
+    #settingsButton {
+      order: 1;
+    }
+
+    #howToPlayButton {
+      order: 2;
+    }
 
     .buttonIcon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
 
-      width: 20px;
-      height: 20px;
+      width: 48px;
+      height: 48px;
 
-      font-size: 17px;
+      font-size: 42px;
       line-height: 1;
+      flex-shrink: 0;
     }
 
-    .smallButton:hover,
-    .smallButton:active {
-      background: #ffd000;
-      color: #000;
-      transform: scale(1.03);
+    #settingsButton .buttonIcon {
+      font-size: 48px;
     }
 
-    /* مكان اللعبة */
+    #howToPlayButton .buttonIcon {
+      font-size: 43px;
+    }
+
+    /* اللعبة */
 
     #game {
       display: none;
+
       position: fixed;
       inset: 0;
+
       width: 100%;
       height: 100%;
+
       overflow: hidden;
       background: #111;
       color: white;
@@ -230,10 +263,13 @@
 
     .hudBox {
       padding: 12px 20px;
+
       border: 1px solid #ffd000;
       border-radius: 8px;
+
       background: rgba(0, 0, 0, 0.7);
       color: #ffd000;
+
       font-size: 18px;
       font-weight: bold;
     }
@@ -246,6 +282,7 @@
       pointer-events: auto;
 
       padding: 10px 18px;
+
       border: 1px solid #ffd000;
       border-radius: 8px;
 
@@ -264,6 +301,7 @@
       position: absolute;
       top: 50%;
       left: 50%;
+
       transform: translate(-50%, -50%);
 
       width: min(90%, 500px);
@@ -284,14 +322,15 @@
 
     .modal {
       display: none;
+
       position: fixed;
       inset: 0;
       z-index: 200;
 
       align-items: center;
       justify-content: center;
-      padding: 20px;
 
+      padding: 20px;
       background: rgba(0, 0, 0, 0.8);
     }
 
@@ -315,8 +354,8 @@
     }
 
     .modalBox p {
-      line-height: 2;
       font-size: 17px;
+      line-height: 2;
     }
 
     .closeButton {
@@ -329,52 +368,50 @@
       background: #ffd000;
       color: #000;
 
-      font-weight: bold;
       font-size: 17px;
+      font-weight: bold;
     }
 
     /* الهاتف */
 
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       #startScreen {
-        padding: 0 14px 25px;
-      }
-
-      .gameTitle {
-        font-size: 36px;
-        letter-spacing: 2px;
-        margin-bottom: 8px;
-      }
-
-      .developerName {
-        font-size: 13px;
-        letter-spacing: 2px;
-        margin-bottom: 18px;
+        padding: 0 12px 22px;
       }
 
       #startButton {
-        min-width: 245px;
-        padding: 14px 25px;
-        font-size: 23px;
+        width: 90%;
+        min-height: 75px;
+        padding: 14px 20px;
+        font-size: 27px;
       }
 
       .smallButtons {
-        gap: 10px;
+        gap: 9px;
         margin-top: 12px;
+        padding: 0;
       }
 
       .smallButton {
-        min-width: 0;
         width: 50%;
-        padding: 11px 8px;
+        min-height: 57px;
+        padding: 8px 5px;
+        gap: 7px;
         font-size: 15px;
-        gap: 5px;
       }
 
       .buttonIcon {
-        width: 17px;
-        height: 17px;
-        font-size: 15px;
+        width: 27px;
+        height: 27px;
+        font-size: 25px;
+      }
+
+      #settingsButton .buttonIcon {
+        font-size: 29px;
+      }
+
+      #howToPlayButton .buttonIcon {
+        font-size: 27px;
       }
 
       #gameTop {
@@ -391,13 +428,32 @@
       #backButton {
         top: 55px;
         right: 10px;
-        font-size: 13px;
         padding: 8px 12px;
+        font-size: 13px;
       }
 
       #message {
-        font-size: 20px;
         padding: 20px;
+        font-size: 20px;
+      }
+    }
+
+    @media (max-height: 500px) {
+      #startScreen {
+        padding-bottom: 12px;
+      }
+
+      #startButton {
+        min-height: 58px;
+        padding: 8px 20px;
+      }
+
+      .smallButtons {
+        margin-top: 8px;
+      }
+
+      .smallButton {
+        min-height: 48px;
       }
     }
   </style>
@@ -405,33 +461,31 @@
 
 <body>
 
-  <!-- شاشة البداية -->
+  <!-- شاشة البداية بدون عنوان BACKROOMS فوق الأزرار -->
   <section id="startScreen">
+
     <div class="menuContent">
 
-      <h1 class="gameTitle">BACKROOMS</h1>
-
-      <div class="developerName">
-        SOUHAIL ALAOUI
-      </div>
-
-      <button id="startButton">
+      <button id="startButton" class="menuButton">
         ابدأ اللعبة
       </button>
 
       <div class="smallButtons">
 
-        <button class="smallButton" id="settingsButton">
+        <!-- الزر الموجود في اليسار -->
+        <button id="settingsButton" class="menuButton smallButton">
           <span class="buttonIcon">⚙</span>
           <span>الإعدادات</span>
         </button>
 
-        <button class="smallButton" id="howToPlayButton">
-          <span class="buttonIcon">📖</span>
+        <!-- الزر الموجود في اليمين -->
+        <button id="howToPlayButton" class="menuButton smallButton">
+          <span class="buttonIcon">▣</span>
           <span>طريقة اللعب</span>
         </button>
 
       </div>
+
     </div>
   </section>
 
@@ -443,6 +497,7 @@
     <div id="gameUI">
 
       <div id="gameTop">
+
         <div class="hudBox">
           الصحة:
           <span id="health">100</span>
@@ -451,6 +506,7 @@
         <div class="hudBox">
           المستوى: 1
         </div>
+
       </div>
 
       <button id="backButton">
@@ -465,8 +521,9 @@
     </div>
   </main>
 
-  <!-- الإعدادات -->
+  <!-- نافذة الإعدادات -->
   <div class="modal" id="settingsModal">
+
     <div class="modalBox">
 
       <h2>الإعدادات</h2>
@@ -482,8 +539,9 @@
     </div>
   </div>
 
-  <!-- طريقة اللعب -->
+  <!-- نافذة طريقة اللعب -->
   <div class="modal" id="howToPlayModal">
+
     <div class="modalBox">
 
       <h2>طريقة اللعب</h2>
@@ -574,7 +632,6 @@
 
       /*
         ضع كود اللعبة الحقيقي هنا.
-        لا تحذف شاشة البداية.
       */
     });
 
