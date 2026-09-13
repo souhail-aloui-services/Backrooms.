@@ -283,7 +283,18 @@ const CONFIG={
   PISTOL_FIRE_RATE:360,   // ms
   PISTOL_MAG:12,
   PISTOL_RESERVE:48,
-  PISTOL_RELOAD_TIME:1.5  // s
+  PISTOL_RELOAD_TIME:1.5, // s
+
+  // room / ceiling variety
+  CEIL_CORRIDOR_MIN:3.3, CEIL_CORRIDOR_MAX:4.4,
+  CEIL_ROOM_MIN:5.2,     CEIL_ROOM_MAX:7.8,
+  CEIL_RARE_MIN:8.6,     CEIL_RARE_MAX:11.5,
+  RARE_ROOM_CHANCE:.18,     // chance a given room-blob becomes a rare room
+  COLUMN_CHANCE:.10,        // chance a non-corridor floor cell gets a column
+  SLANT_WALL_CHANCE:.06,    // chance a wall instance leans / tilts
+  DEBRIS_CHANCE:.05,        // chance any floor cell gets scattered debris
+  DEADEND_DEBRIS_CHANCE:.55,// chance a dead-end cell gets blocked-off debris
+  LIGHT_FALLOFF_RANGE:24    // distance at which ceiling lights fade to black
 };
 
 /* ---------------------------- GAME STATE ---------------------------- */
@@ -335,6 +346,9 @@ const state={
 let scene,camera,renderer,clock,listener;
 let wallMesh=null;
 let grid=[];
+let cellType=[];     // 'wall' | 'corridor' | 'room' | 'rare'
+let cellHeight=[];   // ceiling height per floor cell (meters)
+let columns=[];      // {x,z,radius} collidable pillars
 let startCell={r:1,c:1};
 let gateCell=null;
 let gateMesh=null,gateLight=null;
@@ -427,10 +441,14 @@ function spatialGrowl(mesh){
 function generateMaze(){
   const W=CONFIG.GRID_W,H=CONFIG.GRID_H;
   grid=[];
-  for(let r=0;r<H;r++)grid.push(new Array(W).fill(0));
+  cellType=[];
+  for(let r=0;r<H;r++){
+    grid.push(new Array(W).fill(0));
+    cellType.push(new Array(W).fill("wall"));
+  }
 
   function carve(r,c){
-    grid[r][c]=1;
+    grid[r][c]=1; cellType[r][c]="corridor";
     const dirs=[[-2,0],[2,0],[0,-2],[0,2]];
     for(let i=dirs.length-1;i>0;i--){
       const j=(Math.random()*(i+1))|0;
@@ -439,24 +457,60 @@ function generateMaze(){
     for(const d of dirs){
       const nr=r+d[0],nc=c+d[1];
       if(nr>0&&nr<H-1&&nc>0&&nc<W-1&&grid[nr][nc]===0){
-        grid[r+d[0]/2][c+d[1]/2]=1;
+        grid[r+d[0]/2][c+d[1]/2]=1; cellType[r+d[0]/2][c+d[1]/2]="corridor";
         carve(nr,nc);
       }
     }
   }
   carve(1,1);
+  // note: a recursive-backtracker maze is a perfect maze, which naturally
+  // produces plenty of narrow 1-cell-wide corridors and true dead ends
+  // (blocked-off pockets) — those are kept as-is and later dressed with
+  // debris so they read as intentional dead zones rather than empty gaps.
 
-  // carve a handful of open "rooms" anchored on existing corridor cells
+  // carve a handful of open "rooms" anchored on existing corridor cells,
+  // tracking each blob separately so it can be tagged room/rare afterwards
   const floorCells=[];
   for(let r=1;r<H-1;r++)for(let c=1;c<W-1;c++)if(grid[r][c]===1)floorCells.push([r,c]);
 
-  for(let i=0;i<5;i++){
+  const roomBlobs=[];
+  const numRooms=5+((Math.random()*3)|0);
+  for(let i=0;i<numRooms;i++){
     const anchor=floorCells[(Math.random()*floorCells.length)|0];
     const size=1+((Math.random()*2)|0);
+    const blob=[];
     for(let r=anchor[0]-size;r<=anchor[0]+size;r++){
       for(let c=anchor[1]-size;c<=anchor[1]+size;c++){
-        if(r>0&&r<H-1&&c>0&&c<W-1&&Math.random()<.82)grid[r][c]=1;
+        if(r>0&&r<H-1&&c>0&&c<W-1&&Math.random()<.82){
+          grid[r][c]=1;
+          blob.push([r,c]);
+        }
       }
+    }
+    roomBlobs.push(blob);
+  }
+
+  // tag each room blob as a normal room, or — rarely — a distinct "rare room"
+  roomBlobs.forEach(blob=>{
+    const rare=Math.random()<CONFIG.RARE_ROOM_CHANCE;
+    for(const [r,c] of blob)cellType[r][c]=rare?"rare":"room";
+  });
+
+  computeCellHeights();
+}
+
+function computeCellHeights(){
+  const W=CONFIG.GRID_W,H=CONFIG.GRID_H;
+  cellHeight=Array.from({length:H},()=>new Array(W).fill(CONFIG.WALL_HEIGHT));
+  for(let r=0;r<H;r++){
+    for(let c=0;c<W;c++){
+      if(grid[r][c]!==1)continue;
+      const type=cellType[r][c];
+      let h;
+      if(type==="rare")h=CONFIG.CEIL_RARE_MIN+Math.random()*(CONFIG.CEIL_RARE_MAX-CONFIG.CEIL_RARE_MIN);
+      else if(type==="room")h=CONFIG.CEIL_ROOM_MIN+Math.random()*(CONFIG.CEIL_ROOM_MAX-CONFIG.CEIL_ROOM_MIN);
+      else h=CONFIG.CEIL_CORRIDOR_MIN+Math.random()*(CONFIG.CEIL_CORRIDOR_MAX-CONFIG.CEIL_CORRIDOR_MIN);
+      cellHeight[r][c]=h;
     }
   }
 }
@@ -528,7 +582,7 @@ function proceduralTexture(base,variance,streaks,stains){
 /* ---------------------------- SCENE BUILD ---------------------------- */
 function buildScene(){
   scene=new THREE.Scene();
-  scene.fog=new THREE.Fog(0x171507, 6, CONFIG.MAX_RENDER_DISTANCE);
+  scene.fog=new THREE.FogExp2(0x171507, 0.042); // exponential fog reads as a gradual dimming, not a hard cutoff
 
   camera=new THREE.PerspectiveCamera(CONFIG.FOV, innerWidth/innerHeight, CONFIG.NEAR_CLIP, CONFIG.FAR_CLIP);
   camera.rotation.order="YXZ";
@@ -578,6 +632,8 @@ function buildScene(){
 
   buildFloorCeiling();
   buildWalls();
+  buildColumns();
+  buildDebris();
   buildCeilingLights();
   buildGate();
   buildDetective();
@@ -601,13 +657,39 @@ function buildFloorCeiling(){
   floor.receiveShadow=true;
   scene.add(floor);
 
-  const ceilTex=proceduralTexture("#5c5424",55,false,true);
-  ceilTex.repeat.set(W/4,H/4);
-  const ceilMat=new THREE.MeshStandardMaterial({map:ceilTex,roughness:1});
-  const ceil=new THREE.Mesh(new THREE.PlaneGeometry(W,H),ceilMat);
-  ceil.rotation.x=Math.PI/2;
-  ceil.position.y=CONFIG.WALL_HEIGHT;
-  scene.add(ceil);
+  // ceiling is built per-cell so it can follow the height map (low narrow
+  // corridors, tall open rooms, very tall rare rooms) instead of one flat plane
+  const ceilTexNormal=proceduralTexture("#5c5424",55,false,true);
+  const ceilTexRare=proceduralTexture("#31463f",55,false,true);
+  const tileGeo=new THREE.PlaneGeometry(CONFIG.CELL,CONFIG.CELL);
+  tileGeo.rotateX(Math.PI/2); // face downward
+
+  let normalCount=0,rareCount=0;
+  for(let r=0;r<CONFIG.GRID_H;r++)for(let c=0;c<CONFIG.GRID_W;c++){
+    if(grid[r][c]!==1)continue;
+    if(cellType[r][c]==="rare")rareCount++; else normalCount++;
+  }
+
+  const matNormal=new THREE.MeshStandardMaterial({map:ceilTexNormal,roughness:1});
+  const matRare=new THREE.MeshStandardMaterial({map:ceilTexRare,roughness:1,emissive:0x0e2a24,emissiveIntensity:.18});
+  const dummy=new THREE.Object3D();
+
+  let normalMesh=null,rareMesh=null,ni=0,ri=0;
+  if(normalCount>0)normalMesh=new THREE.InstancedMesh(tileGeo,matNormal,normalCount);
+  if(rareCount>0)rareMesh=new THREE.InstancedMesh(tileGeo,matRare,rareCount);
+
+  for(let r=0;r<CONFIG.GRID_H;r++){
+    for(let c=0;c<CONFIG.GRID_W;c++){
+      if(grid[r][c]!==1)continue;
+      const p=cellToWorld(r,c);
+      dummy.position.set(p.x,cellHeight[r][c],p.z);
+      dummy.updateMatrix();
+      if(cellType[r][c]==="rare"){ rareMesh.setMatrixAt(ri,dummy.matrix); ri++; }
+      else{ normalMesh.setMatrixAt(ni,dummy.matrix); ni++; }
+    }
+  }
+  if(normalMesh){ normalMesh.instanceMatrix.needsUpdate=true; scene.add(normalMesh); }
+  if(rareMesh){ rareMesh.instanceMatrix.needsUpdate=true; scene.add(rareMesh); }
 }
 
 function buildWalls(){
@@ -618,6 +700,8 @@ function buildWalls(){
   let count=0;
   for(let r=0;r<CONFIG.GRID_H;r++)for(let c=0;c<CONFIG.GRID_W;c++)if(grid[r][c]===0)count++;
 
+  // base geometry is CONFIG.WALL_HEIGHT tall; each instance is stretched via
+  // scale.y to reach whichever adjacent room/corridor ceiling is tallest
   const geo=new THREE.BoxGeometry(CONFIG.CELL,CONFIG.WALL_HEIGHT,CONFIG.CELL);
   wallMesh=new THREE.InstancedMesh(geo,wallMat,count);
   wallMesh.castShadow=state.quality!=="low";
@@ -627,37 +711,140 @@ function buildWalls(){
   let i=0;
   for(let r=0;r<CONFIG.GRID_H;r++){
     for(let c=0;c<CONFIG.GRID_W;c++){
-      if(grid[r][c]===0){
-        const p=cellToWorld(r,c);
-        dummy.position.set(p.x,CONFIG.WALL_HEIGHT/2,p.z);
-        dummy.updateMatrix();
-        wallMesh.setMatrixAt(i,dummy.matrix);
-        i++;
+      if(grid[r][c]!==0)continue;
+      const p=cellToWorld(r,c);
+
+      let h=0,found=false;
+      const nbrs=[[r-1,c],[r+1,c],[r,c-1],[r,c+1]];
+      for(const [nr,nc] of nbrs){
+        if(nr>=0&&nr<CONFIG.GRID_H&&nc>=0&&nc<CONFIG.GRID_W&&grid[nr][nc]===1){
+          h=Math.max(h,cellHeight[nr][nc]);
+          found=true;
+        }
       }
+      if(!found)h=CONFIG.WALL_HEIGHT;
+
+      dummy.position.set(p.x,h/2,p.z);
+      dummy.rotation.set(0,0,0);
+      dummy.scale.set(1,h/CONFIG.WALL_HEIGHT,1);
+
+      // occasional leaning/broken wall — purely visual, collision still uses the cell bounds
+      if(Math.random()<CONFIG.SLANT_WALL_CHANCE){
+        dummy.rotation.z=(Math.random()-.5)*.24;
+        dummy.rotation.x=(Math.random()-.5)*.14;
+      }
+
+      dummy.updateMatrix();
+      wallMesh.setMatrixAt(i,dummy.matrix);
+      i++;
     }
   }
   wallMesh.instanceMatrix.needsUpdate=true;
   scene.add(wallMesh);
 }
 
+/* ---------------------------- COLUMNS / DEBRIS ---------------------------- */
+function buildColumns(){
+  columns=[];
+  const candidates=[];
+  for(let r=1;r<CONFIG.GRID_H-1;r++){
+    for(let c=1;c<CONFIG.GRID_W-1;c++){
+      if(grid[r][c]===1 && cellType[r][c]!=="corridor" && Math.random()<CONFIG.COLUMN_CHANCE){
+        candidates.push([r,c]);
+      }
+    }
+  }
+  if(!candidates.length)return;
+
+  const colTex=proceduralTexture("#786f38",50,true,true);
+  const colMat=new THREE.MeshStandardMaterial({map:colTex,roughness:.85});
+  const geo=new THREE.CylinderGeometry(.28,.34,1,10);
+  const mesh=new THREE.InstancedMesh(geo,colMat,candidates.length);
+  const dummy=new THREE.Object3D();
+
+  candidates.forEach(([r,c],i)=>{
+    const p=cellToWorld(r,c);
+    const h=cellHeight[r][c];
+    dummy.position.set(p.x,h/2,p.z);
+    dummy.rotation.set(0,0,0);
+    dummy.scale.set(1,h,1);
+    dummy.updateMatrix();
+    mesh.setMatrixAt(i,dummy.matrix);
+    columns.push({x:p.x,z:p.z,radius:.36});
+  });
+  mesh.instanceMatrix.needsUpdate=true;
+  scene.add(mesh);
+}
+
+function buildDebris(){
+  const picks=[];
+  for(let r=1;r<CONFIG.GRID_H-1;r++){
+    for(let c=1;c<CONFIG.GRID_W-1;c++){
+      if(grid[r][c]!==1)continue;
+      let openNeighbors=0;
+      [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc])=>{
+        if(grid[nr]&&grid[nr][nc]===1)openNeighbors++;
+      });
+      const isDeadEnd=openNeighbors<=1;
+      const spawn=(isDeadEnd&&Math.random()<CONFIG.DEADEND_DEBRIS_CHANCE)||Math.random()<CONFIG.DEBRIS_CHANCE;
+      if(!spawn)continue;
+      const p=cellToWorld(r,c);
+      const n=1+((Math.random()*2)|0);
+      for(let i=0;i<n;i++){
+        picks.push({
+          x:p.x+(Math.random()-.5)*1.7,
+          z:p.z+(Math.random()-.5)*1.7,
+          s:.2+Math.random()*.36,
+          ry:Math.random()*Math.PI
+        });
+      }
+    }
+  }
+  if(!picks.length)return;
+
+  const debrisTex=proceduralTexture("#4a4222",40,true,true);
+  const mat=new THREE.MeshStandardMaterial({map:debrisTex,roughness:1});
+  const geo=new THREE.BoxGeometry(1,1,1);
+  const mesh=new THREE.InstancedMesh(geo,mat,picks.length);
+  const dummy=new THREE.Object3D();
+
+  picks.forEach((p,i)=>{
+    dummy.position.set(p.x,p.s/2,p.z);
+    dummy.rotation.set(Math.random()*.3,p.ry,Math.random()*.3);
+    dummy.scale.set(p.s,p.s,p.s);
+    dummy.updateMatrix();
+    mesh.setMatrixAt(i,dummy.matrix);
+  });
+  mesh.instanceMatrix.needsUpdate=true;
+  scene.add(mesh);
+}
+
 function buildCeilingLights(){
+  ceilingLights=[];
   const floorCells=[];
   for(let r=0;r<CONFIG.GRID_H;r++)for(let c=0;c<CONFIG.GRID_W;c++)if(grid[r][c]===1)floorCells.push([r,c]);
 
   for(let i=0;i<floorCells.length;i+=4){
     const [r,c]=floorCells[i];
     const p=cellToWorld(r,c);
-    const baseIntensity=1.1;
-    const light=new THREE.PointLight(0xffd56a,baseIntensity,9);
-    light.position.set(p.x,CONFIG.WALL_HEIGHT-.4,p.z);
+    const h=cellHeight[r][c];
+    const rare=cellType[r][c]==="rare";
+    const color=rare?0x9de8c9:0xffd56a;
+    const baseIntensity=rare?1.3:1.1;
+
+    const light=new THREE.PointLight(color,baseIntensity,rare?13:9);
+    light.position.set(p.x,h-.4,p.z);
     light.castShadow=false;
     scene.add(light);
 
-    const fixture=new THREE.Mesh(new THREE.BoxGeometry(1.6,.08,.5),new THREE.MeshBasicMaterial({color:0xfff2a8}));
-    fixture.position.set(p.x,CONFIG.WALL_HEIGHT-.06,p.z);
+    const fixture=new THREE.Mesh(new THREE.BoxGeometry(1.6,.08,.5),new THREE.MeshBasicMaterial({color:rare?0xcfffe8:0xfff2a8}));
+    fixture.position.set(p.x,h-.06,p.z);
     scene.add(fixture);
 
-    ceilingLights.push({light:light,base:baseIntensity,flickerChance:Math.random()*.4+.05,worldX:p.x,worldZ:p.z});
+    ceilingLights.push({
+      light:light, base:baseIntensity, worldX:p.x, worldZ:p.z,
+      flickerMode:"steady", flickerTimer:1.5+Math.random()*6, episode:null, episodeIdx:0
+    });
   }
 }
 
@@ -889,6 +1076,17 @@ function resolveCollision(px,pz,radius){
           px+=(dx/dist)*overlap;
           pz+=(dz/dist)*overlap;
         }
+      }
+    }
+    for(const col of columns){
+      const dx=px-col.x, dz=pz-col.z;
+      const distSq=dx*dx+dz*dz;
+      const rad=radius+col.radius;
+      if(distSq<rad*rad){
+        const dist=Math.sqrt(distSq)||.0001;
+        const overlap=rad-dist;
+        px+=(dx/dist)*overlap;
+        pz+=(dz/dist)*overlap;
       }
     }
   }
@@ -1340,13 +1538,51 @@ function updateFlashlight(delta){
 }
 
 function updateCeilingLights(delta){
+  const range=CONFIG.LIGHT_FALLOFF_RANGE;
   for(const cl of ceilingLights){
     const dist=Math.hypot(cl.worldX-state.posX,cl.worldZ-state.posZ);
-    if(dist>22){ cl.light.visible=false; continue; }
+    // smooth, gradual falloff with distance instead of a hard visibility cutoff
+    const falloff=Math.max(0,1-Math.pow(Math.min(1,dist/range),1.6));
+    if(falloff<=.015){ cl.light.visible=false; continue; }
     cl.light.visible=true;
-    let factor=.75+Math.random()*.3; // FlickerFactor between .75 and 1.05
-    if(Math.random()<cl.flickerChance*delta)factor=0; // brief full blackout
-    cl.light.intensity=cl.base*factor;
+
+    // irregular episodic flicker: long steady stretches, occasionally
+    // interrupted by a short burst of a few uneven pulses, then settle again
+    cl.flickerTimer-=delta;
+    if(cl.flickerTimer<=0){
+      if(cl.flickerMode==="steady"){
+        if(Math.random()<.35){
+          const pulses=2+((Math.random()*4)|0);
+          cl.episode=[];
+          for(let i=0;i<pulses;i++){
+            cl.episode.push({dur:.04+Math.random()*.16, val:Math.random()<.5?0:.25+Math.random()*.4});
+          }
+          cl.episode.push({dur:.15+Math.random()*.3, val:1}); // settle pulse
+          cl.flickerMode="flicker";
+          cl.episodeIdx=0;
+          cl.flickerTimer=cl.episode[0].dur;
+        }else{
+          cl.flickerTimer=1.5+Math.random()*5.5;
+        }
+      }else{
+        cl.episodeIdx++;
+        if(!cl.episode||cl.episodeIdx>=cl.episode.length){
+          cl.flickerMode="steady";
+          cl.flickerTimer=2+Math.random()*7;
+        }else{
+          cl.flickerTimer=cl.episode[cl.episodeIdx].dur;
+        }
+      }
+    }
+
+    let factor;
+    if(cl.flickerMode==="flicker"&&cl.episode){
+      factor=cl.episode[cl.episodeIdx].val;
+    }else{
+      factor=.94+Math.random()*.06; // tiny steady jitter, not a full blink
+    }
+
+    cl.light.intensity=cl.base*factor*falloff;
   }
 }
 
